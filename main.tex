@@ -1,0 +1,120 @@
+% Niniejszy plik stanowi przyklad formatowania pracy magisterskiej na
+% Wydziale MIM UW.  Szkielet uzytych polecen mozna wykorzystywac do
+% woli, np. formatujac wlasna prace.
+%
+% Zawartosc merytoryczna stanowi oryginalnosiagniecie
+% naukowosciowe Marcina Wolinskiego.  Wszelkie prawa zastrzezone.
+
+% Copyright (c) 2001 by Marcin Wolinski <M.Wolinski@gust.org.pl>
+% Poprawki spowodowane zmianami przepisów - Marcin Szczuka, 1.10.2004
+% Poprawki spowodowane zmianami przepisow i ujednolicenie 
+% - Seweryn Karlowicz, 05.05.2006
+% Zmiany dla wersji angielskiej - Michal Derezinski, 10.05.2012
+\documentclass{pracamgren}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[titletoc]{appendix}
+\usepackage[backend=bibtex]{biblatex}
+\usepackage{hyperref}
+\bibliography{atari-ram.bib} 
+
+\hypersetup{colorlinks=true}
+\author{Jakub Sygnowski}
+
+\nralbumu{319394}
+
+\title{Learning agents to play Atari games using the RAM memory}
+
+\tytul{Uczenie agentów grających w gry Atari na podstawie pamięci RAM}
+
+\kierunek{Informatics}
+
+% W wersji angielskiej, zakres ma byc po angielsku.
+% \zakres{Tu wpisac, jesli trzeba, jedna z opcji podanych wyzej}
+
+% Praca wykonana pod kierunkiem:
+% (podac tytul/stopien imie i nazwisko opiekuna
+% Instytut
+% ew. Wydzial ew. Uczelnia (jezeli nie MIM UW))
+% W wersji angielskiej, ma byc po angielsku.
+\opiekun{dr hab. Henryk Michalewski\\
+Institute of Mathematics\\
+}
+
+% miesiac i rok (po angielsku):
+\date{November 2016}
+
+%Podac dziedzine wg klasyfikacji Socrates-Erasmus:
+\dziedzina{ 
+%11.3 Informatyka\\ 
+11.4 Sztuczna inteligencja\\ 
+}
+
+\dziedzinaang{
+%11.3 Informatics, Computer Science\\ 
+11.4 Artificial Intelligence\\ 
+}
+
+%Klasyfikacja tematyczna wedlug AMS (matematyka) lub ACM (informatyka)
+\klasyfikacja{Metodologie Obliczeniowe\\
+  Uczenie maszynowe\\
+  Algorytmy uczenia maszynowego\\
+  Programowanie dynamiczne w procesach decyzyjnych Markowa\\
+  Q-learning
+}
+
+\klasyfikacjaang{Computing Methodologies\\
+  Machine learning\\
+  Machine learning algorithms\\
+  Dynamic programming for Markov decision processes\\
+  Q-learning
+}
+
+\keywords{Atari, deep Q-learning, pamięć RAM}
+
+\keywordsang{Atari, deep Q-learning, RAM}
+
+% Tu jest dobre miejsce na Twoje wlasne makra i~srodowiska:
+\newtheorem{defi}{Definition}[section]
+
+% koniec definicji
+
+\begin{document}
+\maketitle
+
+\streszczenie{
+  Niedawne ulepszenia w metodach treningu i powstanie nowych rodzajów sieci neuronowych doprowadziło do stworzenia nowych algorytmów uczenia ze wzmacnianiem. Popularnym zadaniem testującym możliwości tych algorytmów są gry Atari, symulowane na współczesnych komputerach. W naszej pracy adaptujemy popularny i skuteczny algorytm deep Q-learning, który w oryginalnej wersji używa konwolucyjnych sieci neuronowych do przypadku, gdzie wejściem nie jest ekran gry, ale stan pamięci RAM maszyny Atari. Prezentujemy implementację naszej metody i wyniki ewaluacji jej kilku wersji na wybranych grach Atari.
+}
+
+\begin{abstract}
+  Recent advances in the methods of training and invention of the new kinds of neural networks led to creation of the new reinforcement learning algorithms. Popular framework for testing these algorithms are Atari games, simulated on modern computers. In our work we adapt a popular and efficient deep Q-learning algorithm, which in its original version uses convolutional neural networks, to the case when it is given not the game screen, but the RAM state of the Atari machine. We present implementation of our method and results of the evaluation of its few versions on the chosen Atari games.
+\end{abstract}
+
+\nocite{*}
+
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+\include{intro}
+
+\include{foundations}
+
+\include{dqn}
+
+\include{ram-dqn}
+
+\include{results}
+
+\include{future}
+
+\include{appendix}
+
+\cleardoublepage
+\phantomsection % to make sure the page number for Bibliograhpy is correct
+
+\addcontentsline{toc}{chapter}{Bibliography}
+\printbibliography
+
+\end{document}
