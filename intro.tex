@@ -1,3 +1,18 @@
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
-Describe what problem were trying to solve and what is there in the next chapters.
+From the very beginning of computing, humanity is vividly interested in simulating the thought process of mind through the field of artificial intelligence. The advances in theoretical aspects of computer science, as well as methods of manufacturing faster computers made the speed of progress of AI methods ever increasing. One can see it in many domains---from self-driving cars, through machine translation, to speech synthesis. A particularly neat area for testing intelligent algorithms is playing games.
+
+Games are often used as a benchmark of the possibilities of AI, because on one hand, they have a well-defined evaluation metric and are cheap to simulate (which is not the case e.g. with medical diagnosis or steering robots) and, on the other hand, they offer limitless variants and levels of difficulty. While some of them (like chess) require quick search and accurate state evaluation from playing agents, others (e.g. Doom) need reflex and good object recognition, and some (e.g. Morpion) enjoy theorem-proving methods and being treated with linear programming \cite{morpion}.
+
+\todo{Maybe a word that a game is a formally defined problem in real world?}
+
+In this work, we focus on games published for the Atari 2600 -- a game console from the previous century. While these are a very small subset of all games\footnote{There's around 470 games produced for Atari}, their variability offers a group of challenges. In opposition to current trend (\cite{nips-dqn}, \cite{nature-dqn}, \cite{a3c}), we train agents to play the games, seeing only the RAM input, instead of the screen. This problem is scarcely considered in literature (we are aware only of a poorly performing RAM agent in \cite{ale}); most of the methods described here are based on our previous work \cite{our-paper}\todo[noinline]{should we tell this?}, presented on Computer Games Workshop on International Joint Conference in Artificial Intelligence $2016$ in New York.
+
+\todo{Describe why the problem matters---why the Atari games are a reasonable next step for AI}
+\todo{Describe what we've done}
+\todo{Tell that we've published  it on IJCAI}
+\todo{Describe what's there in the next chapters.}
+\todo{Acknolegments to Marc, Henryk \& Deepsense.io}
+\todo{Cite classical papers: first mnih paper, Nature paper, Go paper}
+
+
