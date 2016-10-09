@@ -55,7 +55,7 @@ The strategy $\pi$ is optimal (maximizes the expected discounted reward) if and 
 for all state-action pairs.
 \todo[noinline]{Maybe prove that fact: left -- for optimal strategy we can do greedy actions, right -- assume strategy is not optimal but property satisfied, then there's a better strategy that does different action somewhere, but this action leads to lower Q}
 
-Q-learning is a representative of a general domain of algorithms called Generalized Policy Iteration (see ch. 4.6. in \cite{reinforcement-book}). Their approach is to take turns between updating the estimation of the value of the states (in our case Q-values) and updating the strategy to take into account new state value estimation.
+Q-learning is a representative of a general domain of algorithms called Generalized Policy Iteration (see Chapter 4.6. in \cite{reinforcement-book}). Their approach is to take turns between updating the estimation of the value of the states (in our case Q-values) and updating the strategy to take into account new state value estimation.
  
 In case of Q-learning, the chosen strategy is a greedy one, i.e. it always chooses the action maximizing the immediate reward plus discounted value of the following state:
 \begin{equation}
@@ -92,9 +92,12 @@ Assuming we store all the state transitions as $next\_state[s, a]$ and the rewar
   \caption{Pseudocode of Q-learning.}
 \end{algorithm}
 \section{Deep Learning}
-\todo{Tell that this chapter defines deep learning, which is a set of machine learning methods invented recently, owning state-of-the-arts methods in many domains}
-\todo{Shortly cite some results}
-\subsection{Neural networks}
+Many of the current advances in various domains of AI are the effect of improvements of an old\footnote{The predecessor of today's neural network, perceptron, was invented in $1958$ \cite{perceptron}.} statistical model, inspired by how the brain works: neural network. In this section we define it formally and describe the way in which its design changed that allow it to get a state-of-the-art results in many domains.\todo[noinline]{better word}
+\subsection{Feedforward neural network}
+The simplest neural network, called \emph{feedforward} neural network or \emph{multilayer perceptron} was introduced in 60's \cite{mlp}.
+It consists of a couple of \emph{layers}\footnote{In current state-of-the-art models, the number of layers reaches thousands, see \cite{stochastic}}: each layer is a composed of a number of \emph{nodes}. A node accepts as input all the previous layer 
+
+\todo{Picture}
 \todo{Define neural network}
 \todo{Cite some early works}
 

@@ -14,7 +14,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \input{macros} 
-\bibliography{atari-ram.bib} 
+\bibliographystyle{unsrt}
 
 \hypersetup{colorlinks=true}
 
@@ -89,7 +89,6 @@ Institute of Mathematics\\
   Recent advances in the methods of training and invention of the new kinds of neural networks led to creation of the new reinforcement learning algorithms. Popular framework for testing these algorithms are Atari games, simulated on modern computers. In our work we adapt a popular and efficient deep Q-learning algorithm, which in its original version uses convolutional neural networks, to the case when it is given not the game screen, but the RAM state of the Atari machine. We present implementation of our method and results of the evaluation of its few versions on the chosen Atari games.
 \end{abstract}
 
-\nocite{*}
 
 \tableofcontents
 %\listoffigures
@@ -114,6 +113,8 @@ Institute of Mathematics\\
 \phantomsection % to make sure the page number for Bibliograhpy is correct
 
 \addcontentsline{toc}{chapter}{Bibliography}
-\printbibliography
+\nocite{*}
+\bibliography{atari-ram.bib} 
+%\printbibliography
 
 \end{document}
