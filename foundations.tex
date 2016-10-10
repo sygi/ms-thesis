@@ -91,18 +91,95 @@ Assuming we store all the state transitions as $next\_state[s, a]$ and the rewar
   }
   \caption{Pseudocode of Q-learning.}
 \end{algorithm}
-\section{Deep Learning}
-Many of the current advances in various domains of AI are the effect of improvements of an old\footnote{The predecessor of today's neural network, perceptron, was invented in $1958$ \cite{perceptron}.} statistical model, inspired by how the brain works: neural network. In this section we define it formally and describe the way in which its design changed that allow it to get a state-of-the-art results in many domains.\todo[noinline]{better word}
+\section{Neural networks}
+Many of the current advances in various domains of AI are the effect of improvements of an old\footnote{The predecessor of today's neural network, perceptron, was invented in $1958$ \cite{perceptron}.} statistical model, inspired by how the brain works: neural network. In this section we define it formally and describe the process of finding best parameters for it.
+
 \subsection{Feedforward neural network}
 The simplest neural network, called \emph{feedforward} neural network or \emph{multilayer perceptron} was introduced in 60's \cite{mlp}.
-It consists of a couple of \emph{layers}\footnote{In current state-of-the-art models, the number of layers reaches thousands, see \cite{stochastic}}: each layer is a composed of a number of \emph{nodes}. A node accepts as input all the previous layer 
+It consists of a couple of \emph{layers}:\footnote{In current state-of-the-art models, the number of layers reaches thousands, see e.g. \cite{stochastic}} each layer accepts some inputs, processes them, and outputs them as an input for the next layer (see figure \ref{ann-layers}). The first layer is called input layer, the last---ouput layer and all the layers in between---hidden layers.
+\begin{figure}[h]   \centering
+  \resizebox{0.6\textwidth}{!}{
+  \input{pgfplots/ann-layers}
+  }
+  \caption{Architecture of nodes in a feedforward neural network. Each node receives the outputs of the previous layer.}\label{ann-layers} 
+\end{figure}
 
-\todo{Picture}
-\todo{Define neural network}
-\todo{Cite some early works}
+A layer is a composed of \emph{nodes} (also called \emph{neurons}). A node accepts as input the previous layer's nodes' outputs, calculates a linear combination of them and applies a nonlinear function, called \emph{activation} function to the result (see \ref{ann-nodes}). The typical choices for the activation function are sigmoid: $\frac{1}{1 + e^{-x}}$, hyperbolic tangent, and (popularized recently) rectified linear unit: $\max(0, x)$. 
+\begin{figure}[h]
+  \centering
+  \resizebox{0.7\textwidth}{!}{
+  \input{pgfplots/ann-node}
+}
+  \caption{Details of a neural network node.} \label{ann-nodes}
+\end{figure}
 
-\subsection{Deep Learning revolution}
-\todo{Tell that these methods were not considered state-of-the-art models until recently}
+The trainable parameters of the model are weights of the linear combination of each of the nodes. The intuition behind introducing multilayer, multinode architecture is that different nodes will learn different statistics useful for producing the output, e.g. eye or nose detectors for face recognition. The neurons from the earlier layers will learn simple dependencies in the data (e.g. detection of edges) and the further neurons will combine their information, finding more sophisticated relations (e.g. dog detector neurons).
+
+\subsection{Gradient descent}
+There are a lot of optimization algorithms used to train neural networks, i.e. find the best set of parameters (weights) for a given network architecture and the data. All of them are a modification of a simple algorithm of gradient descent.
+
+To use it, we first need to choose a loss function, which is a differentiable function of the output of the neural network that correlates with how well the model is doing its job; its value should be high for the bad models and low for the good  models. For example, if we want to predict the depth of each pixel in a photo (useful e.g. for self-driving cars), we could use a dataset of images acompanied with their depths estimated with a 3D camera. As a loss function, we could use a mean-squared error between the real depths and those predicted by the model:
+$$
+L = \frac{1}{\mbox{\# images}}\sum_{image} \sum_{x, y} (\mbox{real\_depth}(image, x, y) - \mbox{model\_output}(image, x, y))^2
+$$
+
+Then, to update the weights of the model to minimize the loss, gradient descent calculates the gradient of the loss with respect to every parameter of the model and moves the weights in the direction of the steepest descent by a small amount $\varepsilon$, called \emph{step size} or \emph{learning rate}. Choice of a bigger $\varepsilon$ leads to faster learning, but makes the optimization prone to missing good areas of space or diverging completely. Smaller step size leads to more stable
+learning.
+
+The gradients of every weight is determined with the help of chain rule:
+\begin{equation}\label{chain rule}
+  \frac{d}{dx} (f \circ g) = (\frac{d}{dx} f \circ g\big) \cdot \frac{d}{dx}g
+\end{equation}
+The equation \eqref{chain rule} suggests an order in calculating the derivatives: we should first calculate the ones of the weights in the output layer, then previous hidden layer, and so on until the input layer. For example with squared error, sigmoid activation function, datapoints $x_i$, and target outputs $y_i$ we have:
+\begin{multline}
+  \frac{\partial L}{\partial w_{\text{input}, 1}} = \frac{\partial}{\partial w_{\text{input}, 1}} \sum_{i} (y_i - \text{output}(x_i))^2 =\\=  \sum_{i} 2(y_i - \text{output}(x_i)) * \frac{\partial}{\partial w_{\text{input}, 1}}
+  ( y_i - \text{sigmoid}(\sum_j w_{\text{output}, j} \cdot \text{hidden}(x_i, j))) =\\=
+  \underbrace{\sum_{i} -2(y_i - \text{output}(x_i)) * \text{sigmoid'}(\sum_j w_{\text{output}, j} \cdot \text{hidden}(x_i, j)) * \sum_j \text{hidden}(x_i, j)}_{\sum_j \frac{\partial L}{\partial w_{\text{output}, j}}} * \frac{\partial}{\partial w_{\text{input}, 1}}\ldots
+\end{multline}
+
+Because the process of gradient calculation proceeds from the end of the network toward the beginning, it is called \emph{backpropagion} or \emph{backward pass} (in contract to \emph{forward} pass, when the network is evaluating outputs).
+
+The calculation of a full loss, based on all examples can be infeasible: current datasets often consist of tens of gigabytes of data (see e.g. coco challenge dataset: \cite{coco-dataset}) and to train a network it is often needed to make a couple of thousands of parameter updates.
+To speed the process up, it is common to approximate the full loss function (thus the gradients, too) by a loss calculated on a random subset of data examples. More often than not, a random subset of a $100$ examples will possess statistical properties indistinguishable from the whole dataset, leading to accurate (and fast to obtain) estimates of gradients. This process is called \emph{minibatch} training (and the whole algorithm a \emph{stochastic} gradient descent) and the size of the \emph{batch} is another hyperparameter of the model. There is a tradeoff in its choice---bigger batch size gives better gradient estimates, but takes longer to calculate.
+
+The role of nodes in a neural network is symmetric---there's no reason a particular neuron should behave differently than its neighbor. To enforce neurons to learn various aspects of the data, we initialize the weights randomly. The experiments show that it suffices to make different neurons learn different weights---intuitively, the model with different neurons will have easier time predicting output, as it will be combining various types of information.
+
+One can summarize this section in a stochastic gradient descent pseudocode:
+\begin{algorithm} \label{sgd-pseudo}
+  initialize all weights randomly\;
+  \While{\text{not converged \& not exceeded maximum number of iterations}} {
+    pick a random subset $S$ of data examples\;
+    calculate the loss function for the examples in $S$ in forward pass\;
+    calculate the gradients of the loss and update each weight in a backward pass:
+    $w := w - \varepsilon \cdot \frac{\partial L}{\partial w}$
+  }
+  \caption{Pseudocode of gradient descent.}
+\end{algorithm}
+
+\section{Deep Learning}
+The neural networks were not often applied in modelling until recently. There was a number of factors which contributed to their current successes. In this section we describe shortly the most important of them.
+
+\subsection{Computing power}
+Creating top prediction or classification models requires a lot of computation power.\footnote{Deep learning community jokes that the time to train a state-of-the-art model stays a week, regardless of the rapid increase in the computing power.} Neural networks, with their big expression power can provide good results, but only when supplied with enough data. When we pass a little data to a deep neural network, we can often see an \emph{overfitting} effect---the model performs well on the data it saw (training data), but generalizes poorly to unseen examples (test data). 
+
+In a world with limited computation power, best results will be biased towards simpler models, like linear regression, random forest, or support vector machines. Out of the whole continuum of $R^n \rightarrow R^m$ functions, elementary models will pick a small subset of smooth, easy, reasonable ones and will pick the best one with the use of limitted data. As the subset of functions that can be expressed is small, they are quite different and the best model would be picked.
+
+When a more involved model is trained, it can represent more function, but at the expense that it requires more data (thus more computation power). When faced with data scarsity, it doesn't choose the best function among all that it can represent---it falsely detects noise in the data as significant patterns and erroneusly treats insufficiently often occuring patterns as noise.
+
+Fotunately, thanks to game industry, we saw a rapid increase in computation speed and memory bandwidth of graphics processing units (see figure \ref{nvidia-speed}). These processors allow for executing matrix operations much faster than regular CPUs. Both forward and backward passes of a neural network can be expressed as a few matrix operation, leading to efficient training of neural networks on GPU. In out experiments we saw more than ten-fold speedups moving from a high-end CPU to a middle range GPU.
+
+\begin{figure}[h]
+  \includegraphics[width=\linewidth]{images/gpu-bandwidth.png}
+  \caption{Comparison of best CPU and GPU memory bandwidths in time. Note that the memory bandwidth often constraints the speed of neural network training. Plot comes from \cite{nvidia-docs}}\label{nvidia-speed}.
+\end{figure}
+\subsection{Vanishing and exploding gradients}
+
+\todo{relu saturation}
+
+\subsection{Better training algorithms}
+
+\subsection{Convenient libraries}
+
 \todo{Tell that there came much faster GPUs, which allowed to have deeper networks evaluated quickly}
 \todo{Tell that there were invented algorithms that better move in the multidimensional space of parameters, faster converging to a better local minimum}
 \todo{Tell that it was not expected and cite Krizhevsky paper}
