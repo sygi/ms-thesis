@@ -104,7 +104,7 @@ It consists of a couple of \emph{layers}:\footnote{In current state-of-the-art m
   \caption{Architecture of nodes in a feedforward neural network. Each node receives the outputs of the previous layer.}\label{ann-layers} 
 \end{figure}
 
-A layer is a composed of \emph{nodes} (also called \emph{neurons}). A node accepts as input the previous layer's nodes' outputs, calculates a linear combination of them and applies a nonlinear function, called \emph{activation} function to the result (see \ref{ann-nodes}). The typical choices for the activation function are sigmoid: $\frac{1}{1 + e^{-x}}$, hyperbolic tangent, and (popularized recently) rectified linear unit: $\max(0, x)$. 
+A layer is a composed of \emph{nodes} (also called \emph{neurons}). A node accepts as input the previous layer's nodes' outputs, calculates a linear combination of them and applies a nonlinear function, called \emph{activation} function to the result (see \ref{ann-nodes}). The typical choices for the activation function are sigmoid: $\frac{1}{1 + e^{-x}}$, hyperbolic tangent, and (popularized recently) rectified linear unit (ReLU): $\max(0, x)$. 
 \begin{figure}[h]
   \centering
   \resizebox{0.7\textwidth}{!}{
@@ -160,7 +160,7 @@ One can summarize this section in a stochastic gradient descent pseudocode:
 The neural networks were not often applied in modelling until recently. There was a number of factors which contributed to their current successes. In this section we describe shortly the most important of them.
 
 \subsection{Computing power}
-Creating top prediction or classification models requires a lot of computation power.\footnote{Deep learning community jokes that the time to train a state-of-the-art model stays a week, regardless of the rapid increase in the computing power.} Neural networks, with their big expression power can provide good results, but only when supplied with enough data. When we pass a little data to a deep neural network, we can often see an \emph{overfitting} effect---the model performs well on the data it saw (training data), but generalizes poorly to unseen examples (test data). 
+Creating top prediction or classification models requires a lot of computation power.\footnote{Deep learning community jokes that the time to train a state-of-the-art model stays a week, regardless of the increase in the computing power.} Neural networks, with their big expression power can provide good results, but only when supplied with enough data. When we pass a little data to a deep neural network, we can often see an \emph{overfitting} effect---the model performs well on the data it saw (training data), but generalizes poorly to unseen examples (test data). 
 
 In a world with limited computation power, best results will be biased towards simpler models, like linear regression, random forest, or support vector machines. Out of the whole continuum of $R^n \rightarrow R^m$ functions, elementary models will pick a small subset of smooth, easy, reasonable ones and will pick the best one with the use of limitted data. As the subset of functions that can be expressed is small, they are quite different and the best model would be picked.
 
@@ -170,22 +170,70 @@ Fotunately, thanks to game industry, we saw a rapid increase in computation spee
 
 \begin{figure}[h]
   \includegraphics[width=\linewidth]{images/gpu-bandwidth.png}
-  \caption{Comparison of best CPU and GPU memory bandwidths in time. Note that the memory bandwidth often constraints the speed of neural network training. Plot comes from \cite{nvidia-docs}}\label{nvidia-speed}.
+  \caption{Comparison of best CPU and GPU memory bandwidths in time. Note that the memory bandwidth often constraints the speed of neural network training. Plot comes from \cite{nvidia-docs}.}\label{nvidia-speed}
 \end{figure}
+
 \subsection{Vanishing and exploding gradients}
 
 \todo{relu saturation}
 
 \subsection{Better training algorithms}
+The speed of convergence of vanilla stochastic gradient descent can be improved in many cases. For example, if the optimization space is a valley with high hills and a river with a little slope in the bottom, SGD will zigzag from one wall of the valley to the other, due to higher gradients between the walls than in the river.\todo[noinline]{picture?}
+
+There are a lot of improvements of the SDG to faster move in the optimization space in the situations like this. They include momentum \cite{momentum}, Adam \cite{adam}, or Adadelta \cite{adadelta}. I will describe RMSProp \cite{rmsprop}, the algorithm that we use in our code. One can read about the others in the chapter 8.3. of \cite{dlbook} in detail.
+
+\subsubsection{RMSProp}
+The basic idea of RMSProp is dividing the gradient by the square root of the sum of previous gradients' squares pointwise. This way the directions which keep having high gradients in the course of training, will be scaled more and more and directions will low gradients will be more and more ``preferred'' to traverse along.
+
+To prevent vanishing the learning rate too much and significantly slowing down the learning near the end, instead of calculating the sum, RMSProp stores the exponential average of the history of gradients' squares.
+
+The pseudocode of RMSProp can be found in algorithm \ref{rmsprop-pseudo}.
+\begin{algorithm}
+  \DontPrintSemicolon
+  \SetKwInOut{Input}{input}
+  \Input{Initial parameters $\theta$, learning rate $\varepsilon$, decay rate $\rho$, small constant $\delta$ for numerical stability}
+  Initialize gradient accumulation $r \leftarrow 0$\;
+  \While{not converged}{
+    Pick a random subset $S$ of data examples\;
+    Calculate gradient: $g \leftarrow \nabla_\theta \sum_{(x, y)\in S} L(f(x, \theta), y)$\;
+    Accumulate squared gradient: $r \leftarrow \rho r + (1-\rho) g \cdot g$ (pointwise multiplication)\;
+    Compute parameter update: $\Delta\theta \leftarrow \frac{-\varepsilon}{\sqrt{\delta + r}} \cdot g$ (pointwise multiplication)\;
+    Update parameters: $\theta \leftarrow \theta + \Delta \theta$\;
+  }
+  \caption{Pseudocode of RMSProp, adopted from \cite{dlbook}.}\label{rmsprop-pseudo}
+\end{algorithm}
+\todo[noinline]{consistent notation in algorithms}
+\todo[noinline]{possibly bold the variables using bm}
 
 \subsection{Convenient libraries}
+Another factor causing deep learning models to rise is the creation of open source librarires for symbolic computation. A mere $6$ years ago, if a student or a scientist wanted to experiment with neural network models, he had to implement the neural network as a couple of matrix multiplications, calculate the gradients on paper and backpropagate them in code, and implement a version of gradient descent. Not to mention that performing the computation on GPU using a direct memory manipulation like CUDA increased the code complexity twice.
 
-\todo{Tell that there came much faster GPUs, which allowed to have deeper networks evaluated quickly}
-\todo{Tell that there were invented algorithms that better move in the multidimensional space of parameters, faster converging to a better local minimum}
-\todo{Tell that it was not expected and cite Krizhevsky paper}
+Fortunately, around $2010$ there started to appear open source libraries, greatly simplifying process of implementing deep learning models. Currently there are $3$ such frameworks which are popular: Theano, Torch and Tensorflow.
 
-\todo{Tell about libraries: Torch, Theano, Tensorflow, the latter two allow for automatic differentiation}
-\todo{Tell about libraries built on top of these: Keras, blocks, TFLearn}
+Theano \cite{theano} is a python library developed by Montreal Institute for Learning Algorithms.
+\todo[noinline]{should I mention I developed theano?}
+
+Torch \cite{torch} is a library allowing to write neural networks in Lua, used and developed by Facebook.
+
+Tensorflow \cite{tensorflow} is a library made by Google, supporting writing in C\texttt{++} and python. It was the first to seamlessly allow the distributed training.
+
+The ideas behind these libraries are similar. All of them allow the user to write the high-level code that will be interpreted as a symbolic computation forming a directed acyclic graph. Then, during execution, it is compiled to a low-level code able to run on a GPU. The libraries decide on the order of calculating the nodes in the graph (called \emph{Op}s).
+
+Treating the code written by the user as symbolic expressions and deferring its evaluation allow to perform low-level optimization (like in compilers---in a sense these libraries \textit{are} compilers), symbolically calculate the gradient of an expression, and allow for different backends (CPU vs. GPU).
+
+You can see a short example of Theano code in listing~\ref{theano-code}.
+
+\begin{lstlisting}[language=Python, caption=Example Theano code.,label={theano-code}
+]
+import theano.tensor as T
+x = T.dscalar("x")
+y = 3*x - x*x
+dy = T.grad(y, [x])[0]  # -2x + 3
+eval = theano.function(inputs=[x], outputs=[y, dy])
+eval(3)  # returns [0., -3.]
+\end{lstlisting}
+
+Theano, Torch and Tensorflow in their basic form are libraries to express any kind of computation. The popularisation of them fueled the creation of many higher level frameworks, even further simplifying implementation of deep models. These libraries, including Keras \cite{keras}, blocks \cite{blocks} and TFLearn \cite{tflearn} allow for implementing typical transformations, like a all connected layer, softmax, or popular activation functions in one line. They make it easier to read the data, visualize the learning process, and implement the popular optimization algorithms.
 
 \section{Atari 2600}
 \todo{Tell about the "architecture" of the Atari machine}

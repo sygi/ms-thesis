@@ -14,7 +14,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \input{macros} 
-\bibliographystyle{unsrt}
 
 \hypersetup{colorlinks=true}
 
@@ -95,26 +94,27 @@ Institute of Mathematics\\
 %\listoftables
 \listoftodos
 
+\todo{check spelling}
+\todo{where to put latex tildas}
 \include{intro}
 
 \include{foundations}
 
 \include{dqn}
 
-\include{ram-dqn}
+% \include{ram-dqn}
 
-\include{results}
+% \include{results}
 
-\include{future}
+% \include{future}
 
-\include{appendix}
+% \include{appendix}
 
 \cleardoublepage
 \phantomsection % to make sure the page number for Bibliograhpy is correct
 
 \addcontentsline{toc}{chapter}{Bibliography}
 \nocite{*}
-\bibliography{atari-ram.bib} 
-%\printbibliography
+\printbibliography
 
 \end{document}

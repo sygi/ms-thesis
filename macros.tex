@@ -1,16 +1,25 @@
 \usepackage[titletoc]{appendix}
-\usepackage{natbib}
+\usepackage[backend=bibtex,sorting=none]{biblatex}
 \usepackage{hyperref}
 \usepackage{todonotes}
 \usepackage{graphicx}
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{algorithm2e}
+
+\usepackage{listings}
+\lstdefinestyle{pythonstyle}{
+  captionpos=b,
+  numbers=left,
+}
+\lstset{style=pythonstyle}
+
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.13}
 
 \hypersetup{colorlinks=true}
 
 \presetkeys{todonotes}{inline, color=blue!30, size=\small}{}
+\bibliography{atari-ram.bib}
 
 \DeclareMathOperator*{\argmax}{\,\operatorname{argmax}\,}
