@@ -97,7 +97,8 @@ Many of the current advances in various domains of AI are the effect of improvem
 \subsection{Feedforward neural network}
 The simplest neural network, called \emph{feedforward} neural network or \emph{multilayer perceptron} was introduced in 60's \cite{mlp}.
 It consists of a couple of \emph{layers}:\footnote{In current state-of-the-art models, the number of layers reaches thousands, see e.g. \cite{stochastic}} each layer accepts some inputs, processes them, and outputs them as an input for the next layer (see figure \ref{ann-layers}). The first layer is called input layer, the last---ouput layer and all the layers in between---hidden layers.
-\begin{figure}[h]   \centering
+\begin{figure}[h]
+  \centering
   \resizebox{0.6\textwidth}{!}{
   \input{pgfplots/ann-layers}
   }
@@ -160,7 +161,7 @@ One can summarize this section in a stochastic gradient descent pseudocode:
 The neural networks were not often applied in modelling until recently. There was a number of factors which contributed to their current successes. In this section we describe shortly the most important of them.
 
 \subsection{Computing power}
-Creating top prediction or classification models requires a lot of computation power.\footnote{Deep learning community jokes that the time to train a state-of-the-art model stays a week, regardless of the increase in the computing power.} Neural networks, with their big expression power can provide good results, but only when supplied with enough data. When we pass a little data to a deep neural network, we can often see an \emph{overfitting} effect---the model performs well on the data it saw (training data), but generalizes poorly to unseen examples (test data). 
+Creating top prediction or classification models requires a lot of computation power.\footnote{Deep learning community jokes that the time to train a state-of-the-art model stays a week, regardless of the increase in the computing power.} Neural networks, with their big expression power can provide good results, but only when supplied with enough data. When we pass a little data to a deep neural network, we can often see an \emph{overfitting} effect---the model performs well on the data it saw (training data), but generalizes poorly to unseen examples (test data).
 
 In a world with limited computation power, best results will be biased towards simpler models, like linear regression, random forest, or support vector machines. Out of the whole continuum of $R^n \rightarrow R^m$ functions, elementary models will pick a small subset of smooth, easy, reasonable ones and will pick the best one with the use of limitted data. As the subset of functions that can be expressed is small, they are quite different and the best model would be picked.
 
@@ -236,7 +237,16 @@ eval(3)  # returns [0., -3.]
 Theano, Torch and Tensorflow in their basic form are libraries to express any kind of computation. The popularisation of them fueled the creation of many higher level frameworks, even further simplifying implementation of deep models. These libraries, including Keras \cite{keras}, blocks \cite{blocks} and TFLearn \cite{tflearn} allow for implementing typical transformations, like a all connected layer, softmax, or popular activation functions in one line. They make it easier to read the data, visualize the learning process, and implement the popular optimization algorithms.
 
 \section{Atari 2600}
-\todo{Tell about the "architecture" of the Atari machine}
-\todo{Tell about the different games}
-\todo{Tell about creation of ALE}
-\todo{Tell about creation of OpenAI}
+Atari 2600 is a game console created in the late 70s. It has a processor running at around $1$~MHz, mere $128$ bytes of RAM memory and a joystick with $18$ actions ($9$ positions $\times \{\mbox{fire}, \mbox{no-fire}\}$). To play a game, one needs to insert a cartridge with a ROM of a game ($4kB$ of size) and connect the console to the TV screen. It was producing a new game screen with frequency $60Hz$ using some tricks,\footnote{Interested reader can read a short article about ``racing the beam'' in \cite{racing-beam}.} needed to show the full image when the RAM fitted only a line of it. A picture of the Atari 2600 can be seen in figure \ref{atari-picture}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\linewidth]{images/atari.jpg}
+  \caption{Picture of the Atari machine.}\label{atari-picture}
+\end{figure}
+
+The interest in Atari within AI community arised after the publication of \cite{ale}. It introduces Arcade Learning Environment, a framework which allows for easy creation and evaluation of agents playing Atari games. It encompasses Stella \cite{stella}, the Atari simulator for computers. Thanks to ALE, the programmer can read the screen as a python array, know which actions are possible in each game and read rewards without the need to parse them from the screen nor understanding the details of RAM memory of each game.
+
+Some time after the release of ALE, OpenAI, an emerging player in AI, created a convenient wrapper on top of it: OpenAI Gym \cite{gym}. It further simplifies the evaluation of the agents, introduces some new, non-Atari environments to test the agents, and make it possible to visualize the training on OpenAI page, encouraging scientists to open source their ideas.
+
+The diversity of Atari games made it a good challenge for AI agents. There are both very simple games, like Pong, where a good initial position can guarantee winning and very involved ones, like Montezuma's Revenge \todo[noinline]{maybe cite those games too?} requiring to collect items and use them correctly. The work on creating agents capable to play many of the Atari games well resulted in many breakthroughs in AI, including winning the Go game with a human world-champion \cite{alphago} and creation of deep Q-learning, to which the next chapter is dedicated.
