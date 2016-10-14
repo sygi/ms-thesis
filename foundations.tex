@@ -38,7 +38,7 @@ In the case of Atari games played based on the RAM state, the MDP assumptions ar
 It is worth noting that the algorithms based on markovian assumption (TD-learning, Q-learning, Markov Chain Monte Carlo) are often used dispite the violation of assumption by the environment. The intuition behind that when the state contains enough information for agent to reasonably approximate the next state and reward distribution, it doesn't matter the approximation will not be accurate. One example of this fact is when we train agents to play Atari games based on the screen state \cite{nips-dqn}---the player moves influence the inner state (RAM) of the machine, but the changes may not be immediately apparent on the screen. Still, the game screen gives a lot of information about the game state needed to make an action, thus 
 agent can fairly skillfully learn to make good decisions.
 
-\section{Q-learning}
+\section{Q-learning}\label{qlearning}
 Let's call the function (distribution) mapping the current state $s$ to the action $a$ choosen by the agent \emph{a strategy} (or \emph{policy}) $\pi$.
 
 An algorithm able to choose a strategy in an MDP we will discuss is called Q-learning \cite{qlearning, qlearning-old}. It is based on the notion of Q-value: a function mapping the state-action pair $(s, a)$, for a fixed strategy $\pi$ to the expected discounted reward after being in the state $s$, making an action $a$ and following the strategy $\pi$ until the end of the episode.
@@ -116,7 +116,7 @@ A layer is a composed of \emph{nodes} (also called \emph{neurons}). A node accep
 
 The trainable parameters of the model are weights of the linear combination of each of the nodes. The intuition behind introducing multilayer, multinode architecture is that different nodes will learn different statistics useful for producing the output, e.g. eye or nose detectors for face recognition. The neurons from the earlier layers will learn simple dependencies in the data (e.g. detection of edges) and the further neurons will combine their information, finding more sophisticated relations (e.g. dog detector neurons).
 
-\subsection{Gradient descent}
+\subsection{Gradient descent}\label{gradient descent}
 There are a lot of optimization algorithms used to train neural networks, i.e. find the best set of parameters (weights) for a given network architecture and the data. All of them are a modification of a simple algorithm of gradient descent.
 
 To use it, we first need to choose a loss function, which is a differentiable function of the output of the neural network that correlates with how well the model is doing its job; its value should be high for the bad models and low for the good  models. For example, if we want to predict the depth of each pixel in a photo (useful e.g. for self-driving cars), we could use a dataset of images acompanied with their depths estimated with a 3D camera. As a loss function, we could use a mean-squared error between the real depths and those predicted by the model:
@@ -183,7 +183,7 @@ The speed of convergence of vanilla stochastic gradient descent can be improved 
 
 There are a lot of improvements of the SDG to faster move in the optimization space in the situations like this. They include momentum \cite{momentum}, Adam \cite{adam}, or Adadelta \cite{adadelta}. I will describe RMSProp \cite{rmsprop}, the algorithm that we use in our code. One can read about the others in the chapter 8.3. of \cite{dlbook} in detail.
 
-\subsubsection{RMSProp}
+\subsubsection{RMSProp}\label{rmsprop-section}
 The basic idea of RMSProp is dividing the gradient by the square root of the sum of previous gradients' squares pointwise. This way the directions which keep having high gradients in the course of training, will be scaled more and more and directions will low gradients will be more and more ``preferred'' to traverse along.
 
 To prevent vanishing the learning rate too much and significantly slowing down the learning near the end, instead of calculating the sum, RMSProp stores the exponential average of the history of gradients' squares.
