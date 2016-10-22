@@ -5,7 +5,7 @@ This foundation work, joined with the recent (after $2010$) advances in the meth
 This chapter discusses these methods, as well as describes the Atari machine, as the games we are interested in playing are created for this platform.
 
 \section{Reinforcement learning}
-To create an algorithm learning to play a game or solve any other problem, we first have to formally define what the problem is. We will model Atari games within the framework called reinforcement learning. The main property distinguising reinforcement learning problems from supervised learning (prediction) and unsupervised learning (clustering) is presence of two separate entities: the \emph{environment} and the \emph{agent}.
+To create an algorithm learning to play a game or solve any other problem, we first have to formally define what the problem is. We will model Atari games within the framework called reinforcement learning. The main property distinguishing reinforcement learning problems from supervised learning (prediction) and unsupervised learning (clustering) is presence of two separate entities: the \emph{environment} and the \emph{agent}.
 
 The environment is the physics or the rules of the game. It presents state, which can be any description of the game, to the agent, scores its action and provides him with the following state.
 The agent is the algorithm we prepare. It receives a state it is in from the environment, decides which action to choose there and receives the appropriate reward. Every move happens in a discrete moments of time.
@@ -14,7 +14,7 @@ The aim of the creator of the reinforcement learning algorithm is to invent a wa
 \begin{equation} \label{discounted-reward}
 \sum_{k=0}^{\infty} \gamma^k r_{t + k}
 \end{equation}
-is maximized. $r_T$ is the reward received after doing action $a_T$ in state $s_T$ The exponential averaging is called a \emph{discounted} sum, and $0 < \gamma \le 1$ is called a \emph{discount factor} corresponds to the level of comfort we have with receiving the awards not now, but in the future. This resembles the way people evaluate their gains---if one is promissed a constant amount of money, he'd prefer to receive it rather earlier than later. We assume that every game eventually will find itself in a \emph{terminal} state, which always transistions to a terminal state and gives reward $0$. One such progression from the start of the game to reaching a terminal state is called an \emph{episode}.
+is maximized. $r_T$ is the reward received after doing action $a_T$ in state $s_T$ The exponential averaging is called a \emph{discounted} sum, and $0 < \gamma \le 1$ is called a \emph{discount factor} corresponds to the level of comfort we have with receiving the awards not now, but in the future. This resembles the way people evaluate their gains---if one is promised a constant amount of money, he'd prefer to receive it rather earlier than later. We assume that every game eventually will find itself in a \emph{terminal} state, which always transitions to a terminal state and gives reward $0$. One such progression from the start of the game to reaching a terminal state is called an \emph{episode}.
 
 Both agent and environment are not bound to make their decisions deterministically---in fact, it may be favorable for the agent to play randomly to some extent. In the stochastic case, the aim of the agent is to maximize the discounted sum of expected value of the rewards.
 
@@ -31,21 +31,21 @@ Markov Decision Process (MDP) is a reinforcement learning problem where a distri
   p(s_{t+1}, r_t|s_t, a_t, s_{t-1}, a_{t-1}, \ldots, s_0, a_0) = p(s_{t+1}, r_t|s_t, a_t)
 \end{equation}
 
-This simplifying assumtion can be summarized as "agent has all the information he needs for making actions encoded in the state". One should note that the representation of the state and not the inner mechanics of environment, is crucial here---imagine a chess-playing player, which sees only bottom half of the board. Even though the game is completely deterministic (assuming deterministic strategy of agent and environment, choosing oppontents' moves), agent cannot reliably predict what will be the next state, as there may be pieces on the other part of the board he cannot see yet.
+This simplifying assumption can be summarized as "agent has all the information he needs for making actions encoded in the state". One should note that the representation of the state and not the inner mechanics of environment, is crucial here---imagine a chess-playing player, which sees only bottom half of the board. Even though the game is completely deterministic (assuming deterministic strategy of agent and environment, choosing opponents' moves), agent cannot reliably predict what will be the next state, as there may be pieces on the other part of the board he cannot see yet.
 
 In the case of Atari games played based on the RAM state, the MDP assumptions are satisfied. The code of the game (saved on ROM), together with a random seed for the game define a deterministic function transforming the RAM (the game state) and awarding rewards.
 
-It is worth noting that the algorithms based on markovian assumption (TD-learning, Q-learning, Markov Chain Monte Carlo) are often used dispite the violation of assumption by the environment. The intuition behind that when the state contains enough information for agent to reasonably approximate the next state and reward distribution, it doesn't matter the approximation will not be accurate. One example of this fact is when we train agents to play Atari games based on the screen state \cite{nips-dqn}---the player moves influence the inner state (RAM) of the machine, but the changes may not be immediately apparent on the screen. Still, the game screen gives a lot of information about the game state needed to make an action, thus 
+It is worth noting that the algorithms based on markovian assumption (TD-learning, Q-learning, Markov Chain Monte Carlo) are often used despite the violation of assumption by the environment. The intuition behind that when the state contains enough information for agent to reasonably approximate the next state and reward distribution, it doesn't matter the approximation will not be accurate. One example of this fact is when we train agents to play Atari games based on the screen state \cite{nips-dqn}---the player moves influence the inner state (RAM) of the machine, but the changes may not be immediately apparent on the screen. Still, the game screen gives a lot of information about the game state needed to make an action, thus 
 agent can fairly skillfully learn to make good decisions.
 
 \section{Q-learning}\label{qlearning}
-Let's call the function (distribution) mapping the current state $s$ to the action $a$ choosen by the agent \emph{a strategy} (or \emph{policy}) $\pi$.
+Let's call the function (distribution) mapping the current state $s$ to the action $a$ chosen by the agent \emph{a strategy} (or \emph{policy}) $\pi$.
 
 An algorithm able to choose a strategy in an MDP we will discuss is called Q-learning \cite{qlearning, qlearning-old}. It is based on the notion of Q-value: a function mapping the state-action pair $(s, a)$, for a fixed strategy $\pi$ to the expected discounted reward after being in the state $s$, making an action $a$ and following the strategy $\pi$ until the end of the episode.
 \begin{equation}\label{q-value}
   Q^\pi(s_t, a_t) = \underset{r\sim p(r_t | s_t, a_t)}{\mathbb{E}} r + \sum_{k=t+1}^\infty \gamma^{k-t}\underset{r\sim p(r_k|s_{k-1}, a_{k-1}), a_k\sim \pi(s_k)}{\mathbb{E}} r
 \end{equation}
-where $s_k$ is a random variable describing distribution of the state in time $k$, dependent of the previous state and action, as in equation \eqref{mdp}. From here on, though, we will assume that choice of the next states and rewards by the envirnoment as well as of actions by the agent are done deterministically---it will simplify the notation and all the statements will hold for the stochastic case when wrapped with the expectation signs.
+where $s_k$ is a random variable describing distribution of the state in time $k$, dependent of the previous state and action, as in equation \eqref{mdp}. From here on, though, we will assume that choice of the next states and rewards by the environment as well as of actions by the agent are done deterministically---it will simplify the notation and all the statements will hold for the stochastic case when wrapped with the expectation signs.
 
 The Q-learning algorithm makes use of the following property:
 The strategy $\pi$ is optimal (maximizes the expected discounted reward) if and only if
@@ -96,7 +96,7 @@ Many of the current advances in various domains of AI are the effect of improvem
 
 \subsection{Feedforward neural network}
 The simplest neural network, called \emph{feedforward} neural network or \emph{multilayer perceptron} was introduced in 60's \cite{mlp}.
-It consists of a couple of \emph{layers}:\footnote{In current state-of-the-art models, the number of layers reaches thousands, see e.g. \cite{stochastic}} each layer accepts some inputs, processes them, and outputs them as an input for the next layer (see figure \ref{ann-layers}). The first layer is called input layer, the last---ouput layer and all the layers in between---hidden layers.
+It consists of a couple of \emph{layers}:\footnote{In current state-of-the-art models, the number of layers reaches thousands, see e.g. \cite{stochastic}} each layer accepts some inputs, processes them, and outputs them as an input for the next layer (see figure \ref{ann-layers}). The first layer is called input layer, the last---output layer and all the layers in between---hidden layers.
 \begin{figure}[h]
   \centering
   \resizebox{0.6\textwidth}{!}{
@@ -119,7 +119,7 @@ The trainable parameters of the model are weights of the linear combination of e
 \subsection{Gradient descent}\label{gradient descent}
 There are a lot of optimization algorithms used to train neural networks, i.e. find the best set of parameters (weights) for a given network architecture and the data. All of them are a modification of a simple algorithm of gradient descent.
 
-To use it, we first need to choose a loss function, which is a differentiable function of the output of the neural network that correlates with how well the model is doing its job; its value should be high for the bad models and low for the good  models. For example, if we want to predict the depth of each pixel in a photo (useful e.g. for self-driving cars), we could use a dataset of images acompanied with their depths estimated with a 3D camera. As a loss function, we could use a mean-squared error between the real depths and those predicted by the model:
+To use it, we first need to choose a loss function, which is a differentiable function of the output of the neural network that correlates with how well the model is doing its job; its value should be high for the bad models and low for the good  models. For example, if we want to predict the depth of each pixel in a photo (useful e.g. for self-driving cars), we could use a dataset of images accompanied with their depths estimated with a 3D camera. As a loss function, we could use a mean-squared error between the real depths and those predicted by the model:
 $$
 L = \frac{1}{\mbox{\# images}}\sum_{image} \sum_{x, y} (\mbox{real\_depth}(image, x, y) - \mbox{model\_output}(image, x, y))^2
 $$
@@ -138,10 +138,10 @@ The equation \eqref{chain rule} suggests an order in calculating the derivatives
   \underbrace{\sum_{i} -2(y_i - \text{output}(x_i)) * \text{sigmoid'}(\sum_j w_{\text{output}, j} \cdot \text{hidden}(x_i, j)) * \sum_j \text{hidden}(x_i, j)}_{\sum_j \frac{\partial L}{\partial w_{\text{output}, j}}} * \frac{\partial}{\partial w_{\text{input}, 1}}\ldots
 \end{multline}
 
-Because the process of gradient calculation proceeds from the end of the network toward the beginning, it is called \emph{backpropagion} or \emph{backward pass} (in contract to \emph{forward} pass, when the network is evaluating outputs).
+Because the process of gradient calculation proceeds from the end of the network toward the beginning, it is called \emph{backpropagation} or \emph{backward pass} (in contract to \emph{forward} pass, when the network is evaluating outputs).
 
 The calculation of a full loss, based on all examples can be infeasible: current datasets often consist of tens of gigabytes of data (see e.g. coco challenge dataset: \cite{coco-dataset}) and to train a network it is often needed to make a couple of thousands of parameter updates.
-To speed the process up, it is common to approximate the full loss function (thus the gradients, too) by a loss calculated on a random subset of data examples. More often than not, a random subset of a $100$ examples will possess statistical properties indistinguishable from the whole dataset, leading to accurate (and fast to obtain) estimates of gradients. This process is called \emph{minibatch} training (and the whole algorithm a \emph{stochastic} gradient descent) and the size of the \emph{batch} is another hyperparameter of the model. There is a tradeoff in its choice---bigger batch size gives better gradient estimates, but takes longer to calculate.
+To speed the process up, it is common to approximate the full loss function (thus the gradients, too) by a loss calculated on a random subset of data examples. More often than not, a random subset of a $100$ examples will possess statistical properties indistinguishable from the whole dataset, leading to accurate (and fast to obtain) estimates of gradients. This process is called \emph{minibatch} training (and the whole algorithm a \emph{stochastic} gradient descent) and the size of the \emph{batch} is another hyperparameter of the model. There is a trade-off in its choice---bigger batch size gives better gradient estimates, but takes longer to calculate.
 
 The role of nodes in a neural network is symmetric---there's no reason a particular neuron should behave differently than its neighbor. To enforce neurons to learn various aspects of the data, we initialize the weights randomly. The experiments show that it suffices to make different neurons learn different weights---intuitively, the model with different neurons will have easier time predicting output, as it will be combining various types of information.
 
@@ -163,11 +163,11 @@ The neural networks were not often applied in modelling until recently. There wa
 \subsection{Computing power}
 Creating top prediction or classification models requires a lot of computation power.\footnote{Deep learning community jokes that the time to train a state-of-the-art model stays a week, regardless of the increase in the computing power.} Neural networks, with their big expression power can provide good results, but only when supplied with enough data. When we pass a little data to a deep neural network, we can often see an \emph{overfitting} effect---the model performs well on the data it saw (training data), but generalizes poorly to unseen examples (test data).
 
-In a world with limited computation power, best results will be biased towards simpler models, like linear regression, random forest, or support vector machines. Out of the whole continuum of $R^n \rightarrow R^m$ functions, elementary models will pick a small subset of smooth, easy, reasonable ones and will pick the best one with the use of limitted data. As the subset of functions that can be expressed is small, they are quite different and the best model would be picked.
+In a world with limited computation power, best results will be biased towards simpler models, like linear regression, random forest, or support vector machines. Out of the whole continuum of $R^n \rightarrow R^m$ functions, elementary models will pick a small subset of smooth, easy, reasonable ones and will pick the best one with the use of limited data. As the subset of functions that can be expressed is small, they are quite different and the best model would be picked.
 
-When a more involved model is trained, it can represent more function, but at the expense that it requires more data (thus more computation power). When faced with data scarsity, it doesn't choose the best function among all that it can represent---it falsely detects noise in the data as significant patterns and erroneusly treats insufficiently often occuring patterns as noise.
+When a more involved model is trained, it can represent more function, but at the expense that it requires more data (thus more computation power). When faced with data scarcity, it doesn't choose the best function among all that it can represent---it falsely detects noise in the data as significant patterns and erroneously treats insufficiently often occurring patterns as noise.
 
-Fotunately, thanks to game industry, we saw a rapid increase in computation speed and memory bandwidth of graphics processing units (see figure \ref{nvidia-speed}). These processors allow for executing matrix operations much faster than regular CPUs. Both forward and backward passes of a neural network can be expressed as a few matrix operation, leading to efficient training of neural networks on GPU. In out experiments we saw more than ten-fold speedups moving from a high-end CPU to a middle range GPU.
+Fortunately, thanks to game industry, we saw a rapid increase in computation speed and memory bandwidth of graphics processing units (see figure \ref{nvidia-speed}). These processors allow for executing matrix operations much faster than regular CPUs. Both forward and backward passes of a neural network can be expressed as a few matrix operation, leading to efficient training of neural networks on GPU. In out experiments we saw more than ten-fold speedups moving from a high-end CPU to a middle range GPU.
 
 \begin{figure}[h]
   \includegraphics[width=\linewidth]{images/gpu-bandwidth.png}
@@ -181,7 +181,7 @@ Fotunately, thanks to game industry, we saw a rapid increase in computation spee
 \subsection{Better training algorithms}
 The speed of convergence of vanilla stochastic gradient descent can be improved in many cases. For example, if the optimization space is a valley with high hills and a river with a little slope in the bottom, SGD will zigzag from one wall of the valley to the other, due to higher gradients between the walls than in the river.\todo[noinline]{picture?}
 
-There are a lot of improvements of the SDG to faster move in the optimization space in the situations like this. They include momentum \cite{momentum}, Adam \cite{adam}, or Adadelta \cite{adadelta}. I will describe RMSProp \cite{rmsprop}, the algorithm that we use in our code. One can read about the others in the chapter 8.3. of \cite{dlbook} in detail.
+There are a lot of improvements of the SGD to faster move in the optimization space in the situations like this. They include momentum \cite{momentum}, Adam \cite{adam}, or Adadelta \cite{adadelta}. I will describe RMSProp \cite{rmsprop}, the algorithm that we use in our code. One can read about the others in the chapter 8.3. of \cite{dlbook} in detail.
 
 \subsubsection{RMSProp}\label{rmsprop-section}
 The basic idea of RMSProp is dividing the gradient by the square root of the sum of previous gradients' squares pointwise. This way the directions which keep having high gradients in the course of training, will be scaled more and more and directions will low gradients will be more and more ``preferred'' to traverse along.
@@ -207,7 +207,7 @@ The pseudocode of RMSProp can be found in algorithm \ref{rmsprop-pseudo}.
 \todo[noinline]{possibly bold the variables using bm}
 
 \subsection{Convenient libraries}
-Another factor causing deep learning models to rise is the creation of open source librarires for symbolic computation. A mere $6$ years ago, if a student or a scientist wanted to experiment with neural network models, he had to implement the neural network as a couple of matrix multiplications, calculate the gradients on paper and backpropagate them in code, and implement a version of gradient descent. Not to mention that performing the computation on GPU using a direct memory manipulation like CUDA increased the code complexity twice.
+Another factor causing deep learning models to rise is the creation of open source libraries for symbolic computation. A mere $6$ years ago, if a student or a scientist wanted to experiment with neural network models, he had to implement the neural network as a couple of matrix multiplications, calculate the gradients on paper and backpropagate them in code, and implement a version of gradient descent. Not to mention that performing the computation on GPU using a direct memory manipulation like CUDA increased the code complexity twice.
 
 Fortunately, around $2010$ there started to appear open source libraries, greatly simplifying process of implementing deep learning models. Currently there are $3$ such frameworks which are popular: Theano, Torch and Tensorflow.
 
@@ -234,7 +234,7 @@ eval = theano.function(inputs=[x], outputs=[y, dy])
 eval(3)  # returns [0., -3.]
 \end{lstlisting}
 
-Theano, Torch and Tensorflow in their basic form are libraries to express any kind of computation. The popularisation of them fueled the creation of many higher level frameworks, even further simplifying implementation of deep models. These libraries, including Keras \cite{keras}, blocks \cite{blocks} and TFLearn \cite{tflearn} allow for implementing typical transformations, like a all connected layer, softmax, or popular activation functions in one line. They make it easier to read the data, visualize the learning process, and implement the popular optimization algorithms.
+Theano, Torch and Tensorflow in their basic form are libraries to express any kind of computation. The popularization of them fueled the creation of many higher level frameworks, even further simplifying implementation of deep models. These libraries, including Keras \cite{keras}, blocks \cite{blocks} and TFLearn \cite{tflearn} allow for implementing typical transformations, like a all connected layer, softmax, or popular activation functions in one line. They make it easier to read the data, visualize the learning process, and implement the popular optimization algorithms.
 
 \section{Atari 2600}
 Atari 2600 is a game console created in the late 70s. It has a processor running at around $1$~MHz, mere $128$ bytes of RAM memory and a joystick with $18$ actions ($9$ positions $\times \{\mbox{fire}, \mbox{no-fire}\}$). To play a game, one needs to insert a cartridge with a ROM of a game ($4kB$ of size) and connect the console to the TV screen. It was producing a new game screen with frequency $60Hz$ using some tricks,\footnote{Interested reader can read a short article about ``racing the beam'' in \cite{racing-beam}.} needed to show the full image when the RAM fitted only a line of it. A picture of the Atari 2600 can be seen in figure \ref{atari-picture}.
@@ -245,7 +245,7 @@ Atari 2600 is a game console created in the late 70s. It has a processor running
   \caption{Picture of the Atari machine.}\label{atari-picture}
 \end{figure}
 
-The interest in Atari within AI community arised after the publication of \cite{ale}. It introduces Arcade Learning Environment, a framework which allows for easy creation and evaluation of agents playing Atari games. It encompasses Stella \cite{stella}, the Atari simulator for computers. Thanks to ALE, the programmer can read the screen as a python array, know which actions are possible in each game and read rewards without the need to parse them from the screen nor understanding the details of RAM memory of each game.
+The interest in Atari within AI community arose after the publication of \cite{ale}. It introduces Arcade Learning Environment, a framework which allows for easy creation and evaluation of agents playing Atari games. It encompasses Stella \cite{stella}, the Atari simulator for computers. Thanks to ALE, the programmer can read the screen as a python array, know which actions are possible in each game and read rewards without the need to parse them from the screen nor understanding the details of RAM memory of each game.
 
 Some time after the release of ALE, OpenAI, an emerging player in AI, created a convenient wrapper on top of it: OpenAI Gym \cite{gym}. It further simplifies the evaluation of the agents, introduces some new, non-Atari environments to test the agents, and make it possible to visualize the training on OpenAI page, encouraging scientists to open source their ideas.
 
