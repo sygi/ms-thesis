@@ -55,7 +55,7 @@ The strategy $\pi$ is optimal (maximizes the expected discounted reward) if and 
 for all state-action pairs.
 \todo[noinline]{Maybe prove that fact: left -- for optimal strategy we can do greedy actions, right -- assume strategy is not optimal but property satisfied, then there's a better strategy that does different action somewhere, but this action leads to lower Q}
 
-Q-learning is a representative of a general domain of algorithms called Generalized Policy Iteration (see Chapter 4.6. in \cite{reinforcement-book}). Their approach is to take turns between updating the estimation of the value of the states (in our case Q-values) and updating the strategy to take into account new state value estimation.
+Q-learning is a representative of a general domain of algorithms called Generalized Policy Iteration (see \cite[Chapter~4.6.]{reinforcement-book}). Their approach is to take turns between updating the estimation of the value of the states (in our case Q-values) and updating the strategy to take into account new state value estimation.
  
 In case of Q-learning, the chosen strategy is a greedy one, i.e. it always chooses the action maximizing the immediate reward plus discounted value of the following state:
 \begin{equation}
@@ -72,7 +72,7 @@ $\alpha$ (also called step-size) is a parameter of the algorithm deciding how fa
   \sum_i \alpha_i = \infty, \;\;\;\; \sum_i \alpha_i^2 < \infty
 \end{equation}
 
-Assuming we store all the state transitions as $next\_state[s, a]$ and the rewards as $reward[s, a]$\footnote{in the non-deterministic case these can be approximated by, respectively, observed distribution of the next states and the sample average of rewards in each state-action pair}, the Q-learning algorithm can be written as:
+Assuming we store all the state transitions as $next\_state[s, a]$ and the rewards as $reward[s, a]$\footnote{in the non-deterministic case these can be approximated by, respectively, observed distribution of the next states and the sample average of rewards in each state-action pair}, the Q-learning algorithm can be written as: \todo[noinline]{move it higher somehow}
 
 \begin{algorithm} \label{qlearning-pseudo}
   \For{all state-action pairs$ (s, a)$}{
@@ -105,7 +105,7 @@ It consists of a couple of \emph{layers}:\footnote{In current state-of-the-art m
   \caption{Architecture of nodes in a feedforward neural network. Each node receives the outputs of the previous layer.}\label{ann-layers} 
 \end{figure}
 
-A layer is a composed of \emph{nodes} (also called \emph{neurons}). A node accepts as input the previous layer's nodes' outputs, calculates a linear combination of them and applies a nonlinear function, called \emph{activation} function to the result (see \ref{ann-nodes}). The typical choices for the activation function are sigmoid: $\frac{1}{1 + e^{-x}}$, hyperbolic tangent, and (popularized recently) rectified linear unit (ReLU): $\max(0, x)$. 
+A layer is a composed of \emph{nodes} (also called \emph{neurons}). A node accepts as input the previous layer's nodes' outputs, calculates a linear combination of them and applies a nonlinear function, called \emph{activation} function to the result (see \ref{ann-nodes}). The typical choices for the activation function are sigmoid: $\frac{1}{1 + e^{-x}}$, hyperbolic tangent, and (popularized recently) rectified linear unit (ReLU): $\max(0, x)$. \todo[noinline]{cite cs231n}
 \begin{figure}[h]
   \centering
   \resizebox{0.7\textwidth}{!}{
@@ -117,7 +117,7 @@ A layer is a composed of \emph{nodes} (also called \emph{neurons}). A node accep
 The trainable parameters of the model are weights of the linear combination of each of the nodes. The intuition behind introducing multilayer, multinode architecture is that different nodes will learn different statistics useful for producing the output, e.g. eye or nose detectors for face recognition. The neurons from the earlier layers will learn simple dependencies in the data (e.g. detection of edges) and the further neurons will combine their information, finding more sophisticated relations (e.g. dog detector neurons).
 
 \subsection{Gradient descent}\label{gradient descent}
-There are a lot of optimization algorithms used to train neural networks, i.e. find the best set of parameters (weights) for a given network architecture and the data. All of them are a modification of a simple algorithm of gradient descent.
+There are a lot of optimization algorithms used to train neural networks, i.e. find the best set of parameters (weights) for a given network architecture and the data. All of them are a modification of an algorithm of gradient descent. \todo[noinline]{cite gradient descent}
 
 To use it, we first need to choose a loss function, which is a differentiable function of the output of the neural network that correlates with how well the model is doing its job; its value should be high for the bad models and low for the good  models. For example, if we want to predict the depth of each pixel in a photo (useful e.g. for self-driving cars), we could use a dataset of images accompanied with their depths estimated with a 3D camera. As a loss function, we could use a mean-squared error between the real depths and those predicted by the model:
 $$
@@ -129,7 +129,7 @@ learning.
 
 The gradients of every weight is determined with the help of chain rule:
 \begin{equation}\label{chain rule}
-  \frac{d}{dx} (f \circ g) = (\frac{d}{dx} f \circ g\big) \cdot \frac{d}{dx}g
+  \frac{\partial}{\partial x} (f \circ g) = (\frac{\partial}{\partial x} f \circ g\big) \cdot \frac{\partial}{\partial x}g
 \end{equation}
 The equation \eqref{chain rule} suggests an order in calculating the derivatives: we should first calculate the ones of the weights in the output layer, then previous hidden layer, and so on until the input layer. For example with squared error, sigmoid activation function, datapoints $x_i$, and target outputs $y_i$ we have:
 \begin{multline}
@@ -146,6 +146,7 @@ To speed the process up, it is common to approximate the full loss function (thu
 The role of nodes in a neural network is symmetric---there's no reason a particular neuron should behave differently than its neighbor. To enforce neurons to learn various aspects of the data, we initialize the weights randomly. The experiments show that it suffices to make different neurons learn different weights---intuitively, the model with different neurons will have easier time predicting output, as it will be combining various types of information.
 
 One can summarize this section in a stochastic gradient descent pseudocode:
+\todo[noinline]{move to ipython notebook, maybe cite cs231n}
 \begin{algorithm} \label{sgd-pseudo}
   initialize all weights randomly\;
   \While{\text{not converged \& not exceeded maximum number of iterations}} {
@@ -173,13 +174,13 @@ Fortunately, thanks to game industry, we saw a rapid increase in computation spe
   \includegraphics[width=\linewidth]{images/gpu-bandwidth.png}
   \caption{Comparison of best CPU and GPU memory bandwidths in time. Note that the memory bandwidth often constraints the speed of neural network training. Plot comes from \cite{nvidia-docs}.}\label{nvidia-speed}
 \end{figure}
+\todo[noinline]{take a look at deepBench}
 
 \subsection{Vanishing and exploding gradients}
-
-\todo{relu saturation}
+\optional{relu saturation}
 
 \subsection{Better training algorithms}
-The speed of convergence of vanilla stochastic gradient descent can be improved in many cases. For example, if the optimization space is a valley with high hills and a river with a little slope in the bottom, SGD will zigzag from one wall of the valley to the other, due to higher gradients between the walls than in the river.\todo[noinline]{picture?}
+The speed of convergence of vanilla stochastic gradient descent can be improved in many cases. For example, if the optimization space is a valley with high hills and a river with a little slope in the bottom, SGD will zigzag from one wall of the valley to the other, due to higher gradients between the walls than in the river. \optional{picture}
 
 There are a lot of improvements of the SGD to faster move in the optimization space in the situations like this. They include momentum \cite{momentum}, Adam \cite{adam}, or Adadelta \cite{adadelta}. I will describe RMSProp \cite{rmsprop}, the algorithm that we use in our code. One can read about the others in the chapter 8.3. of \cite{dlbook} in detail.
 
@@ -232,6 +233,7 @@ dy = T.grad(y, [x])[0]  # -2x + 3
 eval = theano.function(inputs=[x], outputs=[y, dy])
 eval(3)  # returns [0., -3.]
 \end{lstlisting}
+\todo[noinline]{move to ipython notebook}
 
 Theano, Torch and Tensorflow in their basic form are libraries to express any kind of computation. The popularization of them fueled the creation of many higher level frameworks, even further simplifying implementation of deep models. These libraries, including Keras \cite{keras}, blocks \cite{blocks} and TFLearn \cite{tflearn} allow for implementing typical transformations, like a all connected layer, softmax, or popular activation functions in one line. They make it easier to read the data, visualize the learning process, and implement the popular optimization algorithms.
 
@@ -248,4 +250,4 @@ The interest in Atari within AI community arose after the publication of \cite{a
 
 Some time after the release of ALE, OpenAI, an emerging player in AI, created a convenient wrapper on top of it: OpenAI Gym \cite{gym}. It further simplifies the evaluation of the agents, introduces some new, non-Atari environments to test the agents, and make it possible to visualize the training on OpenAI page, encouraging scientists to open source their ideas.
 
-The diversity of Atari games made it a good challenge for AI agents. There are both very simple games, like Pong, where a good initial position can guarantee winning and very involved ones, like Montezuma's Revenge \todo[noinline]{maybe cite those games too?} requiring to collect items and use them correctly. The work on creating agents capable to play many of the Atari games well resulted in many breakthroughs in AI, including winning the Go game with a human world-champion \cite{alphago} and creation of deep Q-learning, to which the next chapter is dedicated.
+The diversity of Atari games made it a good challenge for AI agents. There are both very simple games, like Pong, where a good initial position can guarantee winning and very involved ones, like Montezuma's Revenge \todo[noinline]{tell a few more words why it is hard and cite h-DQN} requiring to collect items and use them correctly. The work on creating agents capable to play many of the Atari games well resulted in many breakthroughs in AI, including winning the Go game with a human world-champion \cite{alphago} and creation of deep Q-learning, to which the next chapter is dedicated.
