@@ -1,14 +1,43 @@
 \chapter{Deep Q-learning for RAM}\label{dqn-ram}
-\todo{Remind what problem we try to solve}
-\todo{Describe the network architectures}
+In our work, we adapted DQN to learn not from the game screens, but rather from the RAM state of the Atari machine. In the following sections we describe the previous work in the domain of playing Atari games using RAM, the architectures used by the agents
 
-\section{Tricks}
-\todo{Explain that in the same spirit as Mnih, we try some ideas to improve the model}
+\subsection{Related work}
+The work \cite{Nir} presents a classical planing algorithm to play Atari games based on the RAM. Since the RAM contains only $128$ bytes, one can efficiently search in this space. Nevertheless, the search is too slow to play in real-time---the evaluation of the method assume that one can spend as much time as it is needed to decide on a move. To the best of our knowledge, the only RAM-based agent that does not depend on search was presented in \cite{ale}; we cite these results as \texttt{ale\_ram}.
+
+\subsection{Network architectures}
+We have evaluated the performance of the DQN method for two network architectures processing the RAM state, as well as their variations, accepting both the screen and the RAM.
+
+\subsubsection{\texttt{just\_ram}}
+copy and paste
+
+\subsubsection{\texttt{big\_ram}}
+...
+
+\subsection{Games}
+We test our models on three games: \todo[noinline]{maybe test on space invaders or something? it shouldn't take much time.}
+\begin{itemize}
+\item Bowling: simulation of the game of bowling; the player aims the ball toward the pins and then steers the ball; the aim is to hit the pins.
+\item Breakout: the player bounces the ball with the paddle towards the layer of bricks; the task is to destroy all bricks; a brick is destroyed when the ball hits it.
+\item Seaquest: the player commands a submarine, which can shoot enemies and rescue divers by
+\end{itemize}
+\todo[noinline]{cite, pictures}
+
+Each of this games offers a distinct challenge. Breakout is a relatively easy game with player's actions limited to moves along the horizontal axis. We picked Breakout because disastrous results of learning would indicate a fundamental problem with the RAM learning. The deep Q-network for Seaquest constructed in \cite{mnih-dqn} plays at an amateur human level and for this reason we consider this game as a tempting target for improvements. Also the game state has some elements that possibly can be detected by the RAM-only network (e.g. oxygen-level meter or the number of picked divers). Bowling seems to be a hard game for all deep Q-network models. It is an interesting target for the RAM-based networks, because visualizations suggest that the state of the RAM is changing only very slightly.
+
+\section{Improvements}
+In the same spirit as \cite{mnih-dqn}, we try a couple of enhancements to the basic algorithm of DQN.
+
 \subsection{Dropout}
-\todo{Explain what dropout is}
-\todo{Cite dropout paper}
+Training a basic RAM-only network leads to high variance of the results (see the figures in the previous section) over epochs. This can be a sign of overfitting. To tackle this problem we’ve applied dropout \cite{dropout}, a standard regularization technique for neural networks.
+
+Dropout is a simple, yet effective regularization method. It consists of ``turning off'' with probability $p$ each neuron in training, i.e. setting the output of the neuron to $0$, regardless of its input. In backpropagation, the parameters of switched off nodes are not updated. Then, during testing, all neurons are set to ``on''---they work as in the course of normal training, with the exception that each neuron's output is multiplied by $p$ to make up for the skewed training.
+
+The intuition behind the dropout method is that it forces each node to learn in absence of other nodes. The work \cite{dropout-variance} shows an experimental evidence that the dropout method indeed reduces the variance of the learning process.
+
+We've enabled dropout with probability of turning off a neuron $p = \frac{1}{2}$. This applies to all nodes, except output ones. We implemented dropout for two RAM-only networks: \texttt{just\_ram} and \texttt{big\_ram}.
+
 \subsection{Frameskip}
-\todo{Explain what we tried to do with dropout}
+\todo{Explain what we tried to do with frameskip}
 \subsection{Joining RAM and screen}
 \todo{Explain what and why we tried to do with RAM+screen}
 \subsection{Learning rate}
