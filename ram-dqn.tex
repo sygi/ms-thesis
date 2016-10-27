@@ -246,27 +246,3 @@ The best epoch results of these methods, along with \texttt{ale\_ram}\footnote{T
 
 In Breakout, the best results for the \texttt{big\_ram} model is weaker than one obtained by screen-only network \texttt{nips}. In Seaquest the \texttt{big\_ram} model was better, and \texttt{just\_ram} worse than \texttt{nips}, while in Bowling both RAM-based models performed better than screen-based \texttt{nips}.
 The training plots show that there is a big variance of the results between training epochs.
-
-\section{Improvements}
-In the same spirit as \cite{nips-dqn}, we try a couple of enhancements to the basic algorithm of DQN.
-
-\subsection{Dropout}
-Training a basic RAM-only network leads to high variance of the results (see the figures in the previous section) over epochs. This can be a sign of overfitting. To tackle this problem we applied dropout \cite{dropout}, a standard regularization technique for neural networks.
-
-Dropout is a simple, yet effective regularization method. It consists of ``turning off'' with probability $p$ each neuron in training, i.e. setting the output of the neuron to $0$, regardless of its input. In backpropagation, the parameters of switched off nodes are not updated. Then, during testing, all neurons are set to ``on''---they work as in the course of normal training, with the exception that each neuron's output is multiplied by $p$ to make up for the skewed training.
-
-The intuition behind the dropout method is that it forces each node to learn in absence of other nodes. The work \cite{dropout-variance} shows an experimental evidence that the dropout method indeed reduces the variance of the learning process.
-
-We have enabled dropout with probability of turning off a neuron $p = \frac{1}{2}$. This applies to all nodes, except output ones. We implemented dropout for both RAM-only networks: \texttt{just\_ram} and \texttt{big\_ram}.
-
-\subsection{Learning rate}
-
-\subsection{Frameskip}\label{our-frameskip}
-\todo{Explain what we tried to do with frameskip}
-\subsection{Joining RAM and screen}\label{screen-ram-networks}
-\todo{Explain what and why we tried to do with RAM+screen}
-\subsection{Unrolling frameskip}
-\todo{Tell what we tried with unrolling frameskip}
-\subsection{RNN}
-\optional{If we tried RNN tell what happened}
-

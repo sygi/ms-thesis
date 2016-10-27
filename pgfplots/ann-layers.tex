@@ -2,28 +2,28 @@
 \usetikzlibrary{patterns}
 \begin{scope}[very thin]
 \foreach \x in {0, ..., 2} {
-\node[circle, draw, pattern=dots,pattern color=black!50] (input \x) at (-3, \x) {};
+\node[circle, draw, color=red, thick] (input \x) at (-3, \x) {};
 }
 \foreach \x in {0, ..., 2} {
-  \node[circle, draw, pattern=crosshatch,pattern color=black!30] (hidden1 \x) at (-1.2, \x) {};
+  \node[circle, draw, color=green, thick] (hidden1 \x) at (-1.2, \x) {};
   \foreach \y in {0,...,2}
     \draw[-latex] (input \y) -- (hidden1 \x);
 }
 
 \foreach \x in {0, ..., 3} {
-  \node[circle, draw,pattern=crosshatch, pattern color=black!30] (hidden2 \x) at (0.2, \x-0.5) {};
+  \node[circle, draw,color=green, thick] (hidden2 \x) at (0.2, \x-0.5) {};
   \foreach \y in {0, ..., 2}
     \draw[-latex] (hidden1 \y) -- (hidden2 \x);
 }
 
 \foreach \x in {0, ..., 1} {
-  \node[circle, draw,pattern=horizontal lines,pattern color=black!40] (output \x) at (2, \x +0.5) {};
+  \node[circle, draw,color=blue, thick] (output \x) at (2, \x +0.5) {};
   \foreach \y in {0, ..., 3}
     \draw[-latex] (hidden2 \y) -- (output \x);
 }
 
-\node[rectangle, draw, pattern=dots,pattern color=black!40] () at (-3, -1.2) {input};
-\node[rectangle, draw, pattern=crosshatch,pattern color=black!20] () at (-.5, -1.2) {hidden};
-\node[rectangle, draw, pattern=horizontal lines ,pattern color=black!30]() at (2, -1.2) {output};
+\node[rectangle, draw, color=red, text=black, thick] () at (-3, -1.2) {input};
+\node[rectangle, draw, color=green, text=black, thick] () at (-.5, -1.2) {hidden};
+\node[rectangle, draw, color=blue, text=black, thick]() at (2, -1.2) {output};
 \end{scope}
 \end{tikzpicture}

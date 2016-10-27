@@ -58,7 +58,7 @@ The solution to this problem is to pass not the last frame of the game, but the 
 
 This serves two purposes. First, it solves the problem of ``blinking'' objects, unless they disappear for longer than $k$ frames.
 
-Second, it helps for learning dynamics of the model. Let's imagine the agent is in a state, such that it will receive a big reward if it will press ``left'' for half a second. Assuming $A=4$ actions, $60$ frames per second, and basically random actions at the beginning, this will happen with probability $A^{-(60 / 2)}$. If we change the action every $k=4$ frames, the probability to make the left movement for half a second will dramatically increase to $A^{-(60/(4 \cdot 2))}$---we will now make $4$ times less decisions.
+Second, it helps for learning dynamics of the model. Let's imagine the agent is in a state, such that it will receive a big reward if it will press ``left'' for half a second. Assuming $A=4$ actions, $60$ frames per second, and basically random actions at the beginning, this will happen with probability $A^{-(60 / 2)}$. If we change the action every $k=4$ frames, the probability to make the left movement for half a second will dramatically increase to $A^{-(60/(4 \cdot 2))}$, as we will now make $4$ times less decisions.
 
 Of course, this improvement (called frameskip) limits the amount of strategies that we can learn---our agents are now only able to express strategies that change actions at least every $k$ frames, but, unless the game need superhuman reflex (like, e.g. boxing \todo[noinline]{cite boxing}), using bigger than $1$ frameskip value helps to train good agents in practice.
 
