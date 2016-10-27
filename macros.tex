@@ -1,11 +1,11 @@
 \usepackage[titletoc]{appendix}
 \usepackage[backend=bibtex,sorting=none]{biblatex}
-\usepackage{hyperref}
-\usepackage{todonotes}
 \usepackage{graphicx}
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{algorithm2e}
+\usepackage{enumitem}
+\usepackage{subfigure}
 
 \usepackage{listings}
 \lstdefinestyle{pythonstyle}{
@@ -17,11 +17,24 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.13}
 
+\usepackage{hyperref}
 \hypersetup{colorlinks=true}
 
+\usepackage{todonotes}
 \presetkeys{todonotes}{inline, color=orange!50, size=\small}{}
-
 \newcommand\optional[1]{\todo[noinline,color=blue!20]{optional: #1}}
+\newcommand\todoi[1]{\todo[noinline]{#1}}
+
 \bibliography{atari-ram.bib}
 
+\usepackage{tabularx,colortbl}  % for 'tabularx' environment and 'X' column type
+\usepackage{ragged2e}  % for '\RaggedRight' macro (allows hyphenation)
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X} 
+\usepackage{booktabs}  % for \toprule, \midrule, and \bottomrule macros 
+
 \DeclareMathOperator*{\argmax}{\,\operatorname{argmax}\,}
+\newcommand\discussed{\noindent\hrulefill
+\begin{center}\begin{small}PRZEDYSKUTOWANE DOTĄD\end{small}\end{center}
+  \noindent\hrulefill}
+
+\usepackage{cleveref}

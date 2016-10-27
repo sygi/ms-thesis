@@ -105,7 +105,7 @@ It consists of a couple of \emph{layers}:\footnote{In current state-of-the-art m
   \caption{Architecture of nodes in a feedforward neural network. Each node receives the outputs of the previous layer.}\label{ann-layers} 
 \end{figure}
 
-A layer is a composed of \emph{nodes} (also called \emph{neurons}). A node accepts as input the previous layer's nodes' outputs, calculates a linear combination of them and applies a nonlinear function, called \emph{activation} function to the result (see \ref{ann-nodes}). The typical choices for the activation function are sigmoid: $\frac{1}{1 + e^{-x}}$, hyperbolic tangent, and (popularized recently) rectified linear unit (ReLU): $\max(0, x)$. \todo[noinline]{cite cs231n}
+A layer is a composed of \emph{nodes} (also called \emph{neurons}). A node accepts as input the previous layer's nodes' outputs, calculates a linear combination of them and applies a nonlinear function, called \emph{activation} function to the result (see \ref{ann-nodes}). The typical choices for the activation function are sigmoid: $\frac{1}{1 + e^{-x}}$, hyperbolic tangent, and (popularized recently) rectified linear unit (ReLU): $\max(0, x)$.\footnote{A thorough, yet comprehensible discussion of the various activation functions can be found in \cite{cs231-actfun}.}
 \begin{figure}[h]
   \centering
   \resizebox{0.7\textwidth}{!}{
@@ -182,7 +182,7 @@ Fortunately, thanks to game industry, we saw a rapid increase in computation spe
 \subsection{Better training algorithms}
 The speed of convergence of vanilla stochastic gradient descent can be improved in many cases. For example, if the optimization space is a valley with high hills and a river with a little slope in the bottom, SGD will zigzag from one wall of the valley to the other, due to higher gradients between the walls than in the river. \optional{picture}
 
-There are a lot of improvements of the SGD to faster move in the optimization space in the situations like this. They include momentum \cite{momentum}, Adam \cite{adam}, or Adadelta \cite{adadelta}. I will describe RMSProp \cite{rmsprop}, the algorithm that we use in our code. One can read about the others in the chapter 8.3. of \cite{dlbook} in detail.
+There are a lot of improvements of the SGD to faster move in the optimization space in the situations like this. They include momentum \cite{momentum}, Adam \cite{adam}, or Adadelta \cite{adadelta}. I will describe RMSProp \cite{rmsprop}, the algorithm that we use in our code. One can read about the others in \cite[chapter 8.3.]{dlbook} in detail.
 
 \subsubsection{RMSProp}\label{rmsprop-section}
 The basic idea of RMSProp is dividing the gradient by the square root of the sum of previous gradients' squares pointwise. This way the directions which keep having high gradients in the course of training, will be scaled more and more and directions will low gradients will be more and more ``preferred'' to traverse along.
@@ -235,7 +235,7 @@ eval(3)  # returns [0., -3.]
 \end{lstlisting}
 \todo[noinline]{move to ipython notebook}
 
-Theano, Torch and Tensorflow in their basic form are libraries to express any kind of computation. The popularization of them fueled the creation of many higher level frameworks, even further simplifying implementation of deep models. These libraries, including Keras \cite{keras}, blocks \cite{blocks} and TFLearn \cite{tflearn} allow for implementing typical transformations, like a all connected layer, softmax, or popular activation functions in one line. They make it easier to read the data, visualize the learning process, and implement the popular optimization algorithms.
+Theano, Torch and Tensorflow in their basic form are libraries to express any kind of computation. The popularization of them fueled the creation of many higher level frameworks, even further simplifying implementation of deep models. These libraries, including Keras \cite{keras}, blocks \cite{blocks} and TFLearn \cite{tflearn} allow for implementing typical transformations, like an all connected layer, softmax, or popular activation functions in one line. They make it easier to read the data, visualize the learning process, and implement the popular optimization algorithms.
 
 \section{Atari 2600}
 Atari 2600 is a game console created in the late 70s. It has a processor running at around $1$~MHz, mere $128$ bytes of RAM memory and a joystick with $18$ actions ($9$ positions $\times \{\mbox{fire}, \mbox{no-fire}\}$). To play a game, one needs to insert a cartridge with a ROM of a game ($4kB$ of size) and connect the console to the TV screen. It was producing a new game screen with frequency $60Hz$ using some tricks,\footnote{Interested reader can read a short article about ``racing the beam'' in \cite{racing-beam}.} needed to show the full image when the RAM fitted only a line of it. A picture of the Atari 2600 can be seen in figure \ref{atari-picture}.

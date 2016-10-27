@@ -44,10 +44,12 @@ One of the solution to this problem, is instead of using a greedy strategy (choo
 
 This technique is not uniquely associated with DQN, in fact it was used with bare Q-learning and other reinforcement learning algorithms from early on.
 
+\discussed
+
 \subsection{$\varepsilon$ decay}
 To set the trade-off in an appropriate place, the dqn inventors decided to use changing $\varepsilon$, namely one decaying linearly from $1$ to $0.1$. This way, at the beginning of training, when the state value estimations are poor, the agent does more exploration of new actions and further down chooses the best action according to the Q-values of states. Note that the random actions are done only in the training part---when the performance of a trained agent is evaluated, it always chooses the best action it knows.
 
-\section{Frameskip}
+\section{Frameskip}\label{dqn-frameskip}
 In many Atari games, developers use visual illusion to make games look better. For example, in Space Invaders, in which the aim of the user is to shoot down the enemy ships and avoid their shots, the shots are not shown on the screen on every frame. Instead, the user can see the shot on one frame, then for a couple of frames the shot cannot be seen on the screen, then the shot appears somewhere further. For humans, the illusion of movement is good enough.
 
 If we tried to pass the one-frame input to the neural network, it'll have problems learning the appropriate Q-values, because the without seeing the shot, the network will not know if in the next state the player will be hit and will lose a life or the enemy will be killed and user will gain points. Formally speaking, the markovian assumption we were using from the very beginning will be badly wrong.
@@ -60,7 +62,7 @@ Second, it helps for learning dynamics of the model. Let's imagine the agent is 
 
 Of course, this improvement (called frameskip) limits the amount of strategies that we can learn---our agents are now only able to express strategies that change actions at least every $k$ frames, but, unless the game need superhuman reflex (like, e.g. boxing \todo[noinline]{cite boxing}), using bigger than $1$ frameskip value helps to train good agents in practice.
 
-\section{Experience replay}
+\section{Experience replay}\label{experience-replay}
 Another method used to effectively train the neural network agents used in dqn is experience replay. Training a neural network to achieve good performance can be a long process. For a regular supervised tasks, like image recognition or machine translation is it not uncommon to have to process the whole dataset multiple (tens to hundreds) of times (called epochs) to get the optimal parameters of given architecture, even with the use of minibatch training.
 
 In the reinforcement learning setting, we don't have a dataset per se, we rather interact with environment and observe its reactions. To be able to effectively use the experience from training the neural networks for vanilla, prediction tasks, we save the history of our interactions (in form of a list of tuples, containing $($state, action, reward, next state$)$) in memory. When we train our network, we do the actions according to the strategy defined by the network's evaluations, but to change the network, we choose a random batch of tuples from the memory and calculate the gradients using them.
