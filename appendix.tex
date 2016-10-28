@@ -16,7 +16,7 @@ Most of the experiments we executed during the project were ran on a cluster of 
 #SBATCH --mem 4000
 #SBATCH --time=165:00:00
 #SBATCH --gres=gpu:1
-#SBTACH --output="logs"
+#SBATCH --output="logs"
 #SBATCH --exclude wn8002,wn8006
 #SBATCH -C cuda
 
@@ -48,7 +48,7 @@ The list of hyperparameters and their descriptions. Most of the descriptions com
 hyperparameter & value & description \\
 \midrule
 minibatch size & $32$ & Number of training cases over which each stochastic gradient descent (SGD) update is computed. \\\addlinespace
-replay memory size & $100\,000$ & SGD updates are randomply sampled from this number of most recent frames. \\\addlinespace
+replay memory size & $100\,000$ & SGD updates are randomly sampled from this number of most recent frames. \\\addlinespace
 phi length & $4$ & The number of most recent frames experienced by the agent that are given as input to the Q network in case of the networks that accept screen as input. \\\addlinespace
 update rule & \texttt{rmsprop} &  Name of the algorithm optimizing the neural network's objective function   \\ \addlinespace
 learning rate &  $0.0002$  & The learning rate for rmsprop\\ \addlinespace

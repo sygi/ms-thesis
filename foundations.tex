@@ -44,34 +44,7 @@ Q-learning~\cite{qlearning, qlearning-old} is an algorithm able to choose a stra
 \begin{equation}\label{q-value}
   Q^\pi(s_t, a_t) = \underset{r\sim p(r_t | s_t, a_t)}{\mathbb{E}} r + \sum_{k=t+1}^\infty \gamma^{k-t}\underset{r\sim p(r_k|s_{k-1}, a_{k-1}), a_k\sim \pi(s_k)}{\mathbb{E}} r
 \end{equation}
-where $s_k$ is a random variable describing distribution of the states in time~$k$, dependent of the previous state and action, as in equation~\eqref{mdp}. From here on, though, we will assume that choice of the next states and rewards by the environment as well as of actions by the agent are done deterministically---it will simplify the notation and all the statements will hold for the stochastic case when wrapped with the expectation signs.
-
-The Q-learning algorithm makes use of the following property:
-The strategy~$\pi$ is optimal (maximizes the expected discounted reward) if and only if
-\begin{equation}\label{qlearning-property}
-  Q^\pi(s_t, a_t) = r_t + \gamma \max_a Q(s_{t+1}, a)
-\end{equation}
-for all state-action pairs.
-\todo[noinline]{Maybe prove that fact: left -- for optimal strategy we can do greedy actions, right -- assume strategy is not optimal but property satisfied, then there's a better strategy that does different action somewhere, but this action leads to lower Q}
-
-Q-learning is a representative of a general domain of algorithms called Generalized Policy Iteration (see~\cite[Chapter~4.6.]{reinforcement-book}). Their approach is to take turns between updating the estimation of the value of the states (in our case Q-values) and updating the strategy to take into account new state value estimation.
- 
-In the case of Q-learning, the chosen strategy is a greedy one, i.e. it always chooses the action maximizing the immediate reward plus discounted value of the following state:
-\begin{equation}
-  \pi(s_t) = \argmax_a \big(r(s_t, a) + \max_{a^*} Q^\pi(s_{t+1}, a^*)\big)
-\end{equation}
-where $r(s, a)$ is the immediate reward after making an action~$a$ in a state~$s$ and~$s_{t+1}$ is (a convenient notation for) a next state after making the action~$a$ in the state~$s_t$.
-
-The update to the Q-values is being made to force more state-action pairs to satisfy the property~\eqref{qlearning-property}:
-\begin{equation}
-  Q_{new}(s_t, a) := \alpha Q_{old}(s_t, a) + (1 - \alpha)\big(r(s_t, a) + \max_{a^*} Q_{old}(s_{t+1}, a^*)\big)
-\end{equation}
-$\alpha$ (also called step~size) is a parameter of the algorithm deciding how fast it should move the Q-value estimations toward the ones locally satisfying~\eqref{qlearning-property}. Bigger values lead to faster training, but the convergence proof for constant step~size requires sufficiently small $\alpha$~\cite[section~3.]{qlearning-old}. It was also shown in~\cite{qlearning-convergence}, that the Q-learning algorithm converges when the variable step~size satisfies:
-\begin{equation}
-  \sum_i \alpha_i = \infty, \;\;\;\; \sum_i \alpha_i^2 < \infty
-\end{equation}
-
-Assuming we store all the state transitions as $next\_state[s, a]$ and the rewards as $reward[s, a]$\footnote{In the non-deterministic case these can be approximated by, respectively, observed distribution of the next states and the sample averages of rewards in each state-action pair.}, the Q-learning algorithm can be written as presented in algorithm \ref{qlearning-pseudo}. \todo[noinline]{move it higher somehow}
+where $s_k$ is a random variable describing distribution of the states in time~$k$, dependent of the previous state and action, as in equation~\eqref{mdp}. From here on, though, we will assume that choice of the next states and rewards by the environment as well as of actions by the agent are done deterministically---it will simplify the notation and all the statements will hold for the stochastic case when wrapped with the expectation signs. Assuming we store all the state transitions as $next\_state[s, a]$ and the rewards as $reward[s, a]$,\footnote{In the non-deterministic case these can be approximated by, respectively, observed distribution of the next states and the sample averages of rewards in each state-action pair.} the Q-learning algorithm can be written as presented in algorithm \ref{qlearning-pseudo}.
 
 \begin{algorithm} \label{qlearning-pseudo}
   \For{all state-action pairs$ (s, a)$}{
@@ -90,6 +63,33 @@ Assuming we store all the state transitions as $next\_state[s, a]$ and the rewar
   }
   \caption{Pseudocode of Q-learning.}
 \end{algorithm}
+
+The algorithm makes use of the following property:
+The strategy~$\pi$ is optimal (maximizes the expected discounted reward) if and only if:
+\begin{equation}\label{qlearning-property}
+  Q^\pi(s_t, a_t) = r_t + \gamma \max_a Q(s_{t+1}, a)
+\end{equation}
+for all state-action pairs.
+\optional{Prove that fact: left -- for optimal strategy we can do greedy actions, right -- assume strategy is not optimal but property satisfied, then there's a better strategy that does different action somewhere, but this action leads to lower Q}
+
+Q-learning is a representative of a general domain of algorithms called Generalized Policy Iteration (see~\cite[Chapter~4.6.]{reinforcement-book}). Their approach is to take turns between updating the estimation of the value of the states (in our case Q-values) and updating the strategy to take into account new state value estimation.
+ 
+In the case of Q-learning, the chosen strategy is a greedy one, i.e. it always chooses the action maximizing the immediate reward plus discounted value of the following state:
+\begin{equation}
+  \pi(s_t) = \argmax_a \big(r(s_t, a) + \max_{a^*} Q^\pi(s_{t+1}, a^*)\big)
+\end{equation}
+where $r(s, a)$ is the immediate reward after making an action~$a$ in a state~$s$ and~$s_{t+1}$ is (a convenient notation for) a next state after making the action~$a$ in the state~$s_t$.
+
+The update to the Q-values is being made to force more state-action pairs to satisfy the property~\eqref{qlearning-property}:
+\begin{equation}
+  Q_{new}(s_t, a) := \alpha Q_{old}(s_t, a) + (1 - \alpha)\big(r(s_t, a) + \max_{a^*} Q_{old}(s_{t+1}, a^*)\big)
+\end{equation}
+$\alpha$ (also called step~size) is a parameter of the algorithm deciding how fast it should move the Q-value estimations toward the ones locally satisfying~\eqref{qlearning-property}. Bigger values lead to faster training, but the convergence proof for constant step~size requires sufficiently small $\alpha$~\cite[section~3.]{qlearning-old}. It was also shown in~\cite{qlearning-convergence}, that the Q-learning algorithm converges when the variable step~size satisfies:
+\begin{equation}
+  \sum_i \alpha_i = \infty, \;\;\;\; \sum_i \alpha_i^2 < \infty
+\end{equation}
+
+
 \section{Neural networks}
 Many of the current advances in various domains of AI are the effect of improvements of an old\footnote{The predecessor of today's neural network, perceptron, was invented in~$1958$~\cite{perceptron}.} statistical model, inspired by how the brain works: neural network. In this section we define it formally and describe the process of finding best parameters for it.
 
@@ -144,8 +144,8 @@ To speed the process up, it is common to approximate the full loss function (thu
 
 The role of nodes in a neural network is symmetric---there's no reason a particular neuron should behave differently than its neighbor. To enforce neurons to learn various aspects of the data, we initialize the weights randomly. The experiments show that it suffices to make different neurons learn different weights---intuitively, the model with different neurons will have easier time predicting output, as it will be combining various types of information.
 
-One can summarize this section in a stochastic gradient descent pseudocode:
-\todo[noinline]{move to ipython notebook, maybe cite cs231n}
+One can summarize this section by presenting a stochastic gradient descent pseudocode in algorithm~\ref{sgd-pseudo}. An example implementation for a toy problem can be found in file \texttt{code/gradient-descent.ipynb} on the CD.
+
 \begin{algorithm} \label{sgd-pseudo}
   initialize all weights randomly\;
   \While{\text{not converged \& not exceeded maximum number of iterations}} {
@@ -203,8 +203,6 @@ The pseudocode of RMSProp can be found in algorithm~\ref{rmsprop-pseudo}.
   }
   \caption{Pseudocode of RMSProp, adapted from~\cite{dlbook}.}\label{rmsprop-pseudo}
 \end{algorithm}
-\todo[noinline]{consistent notation in algorithms}
-\todo[noinline]{possibly bold the variables using bm}
 
 \subsection{Convenient libraries}
 Another factor causing deep learning models to rise is the creation of open source libraries for symbolic computation. A mere $6$~years~ago, if a student or a scientist wanted to experiment with neural network models, he had to implement the neural network as a couple of matrix multiplications, calculate the gradients on paper and backpropagate them in code, and implement a version of gradient descent. Not to mention that performing the computation on GPU using a direct memory manipulation like CUDA increased the code complexity twice.
@@ -221,19 +219,28 @@ The ideas behind these libraries are similar. All of them allow the user to writ
 
 Treating the code written by the user as symbolic expressions and deferring its evaluation allow to perform low-level optimization (like in compilers---in a sense these libraries \textit{are} compilers), symbolically calculate the gradient of an expression, and allow for different backends (CPU~vs.~GPU).
 
-You can see a short example of Theano code in listing~\ref{theano-code}.
+\renewcommand{\figurename}{Snippet}
+You can see a short example of Theano code in snippet~\ref{theano-code}, which is also available as \texttt{code/theano.ipynb} on the CD.
 
-\begin{lstlisting}[language=Python, caption=Example Theano code.,label={theano-code}
-]
-import theano.tensor as T
-x = T.dscalar("x")
-y = 3*x - x*x
-dy = T.grad(y, [x])[0]  # -2x + 3
-eval = theano.function(inputs=[x], outputs=[y, dy])
-eval(3)  # returns [0., -3.]
-\end{lstlisting}
-\todo[noinline]{move to ipython notebook}
+\begin{figure}[!h]
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}1}]:} \PY{k+kn}{import} \PY{n+nn}{theano}
+        
+        \PY{n}{x} \PY{o}{=} \PY{n}{theano}\PY{o}{.}\PY{n}{tensor}\PY{o}{.}\PY{n}{dscalar}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n}{y} \PY{o}{=} \PY{l+m+mi}{3} \PY{o}{*} \PY{n}{x} \PY{o}{\PYZhy{}} \PY{n}{x} \PY{o}{*} \PY{n}{x}
+        \PY{n}{dy} \PY{o}{=} \PY{n}{theano}\PY{o}{.}\PY{n}{tensor}\PY{o}{.}\PY{n}{grad}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{p}{[}\PY{n}{x}\PY{p}{]}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{c+c1}{\PYZsh{} \PYZhy{}2x + 3}
+        \PY{n}{f} \PY{o}{=} \PY{n}{theano}\PY{o}{.}\PY{n}{function}\PY{p}{(}\PY{n}{inputs}\PY{o}{=}\PY{p}{[}\PY{n}{x}\PY{p}{]}\PY{p}{,} \PY{n}{outputs}\PY{o}{=}\PY{p}{[}\PY{n}{y}\PY{p}{,} \PY{n}{dy}\PY{p}{]}\PY{p}{)}
+        \PY{n}{f}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{)}
+\end{Verbatim}
 
+            \begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}1}]:} [array(0.0), array(-3.0)]
+\end{Verbatim}
+              \cprotect\caption{Example Theano code}
+              \label{theano-code}
+\end{figure}
+
+\renewcommand{\figurename}{Figure}
 Theano, Torch and Tensorflow in their basic form are libraries to express any kind of computation. The popularization of them fueled the creation of many higher level frameworks, even further simplifying implementation of deep models. These libraries, including Keras~\cite{keras}, blocks~\cite{blocks} and TFLearn~\cite{tflearn} allow for implementing typical transformations, like an all connected layer, softmax, or popular activation functions, in one line. They make it easier to read the data, visualize the learning process, and implement the popular optimization algorithms.
 
 \section{Atari~2600}
@@ -249,4 +256,4 @@ The interest in Atari within AI community arose after the publication of~\cite{a
 
 Some time after the release of~ALE, OpenAI, an emerging player in AI, created a convenient wrapper on top of it: OpenAI~Gym~\cite{gym}. It further simplifies the evaluation of the agents, introduces some new, non-Atari environments to test the agents, and make it possible to visualize the training on OpenAI~page, encouraging scientists to open source their ideas.
 
-The diversity of Atari games made it a good challenge for AI agents. There are both very simple games, like Pong, where a good initial position can guarantee winning and very involved ones, like Montezuma's~Revenge \todo[noinline]{tell a few more words why it is hard and cite h-DQN} requiring to collect items and use them correctly. The work on creating agents capable to play many of the Atari games well resulted in many breakthroughs in AI, including winning the Go game with a human world-champion~\cite{alphago} and creation of deep~Q-learning, to which the next chapter is dedicated.
+The diversity of Atari games made it a good challenge for AI agents. There are both very simple games, like Pong, where a good initial position of the paddle can guarantee winning and very involved ones, like Montezuma's~Revenge requiring to collect items and use them correctly.\footnote{The best to our knowledge method for Montezuma's~Revenge~\cite{hdqn}, requires manual formulation of the game's objects and sub-goals, what makes it hardly transferable to other environments.} The work on creating agents capable to play many of the Atari games well resulted in many breakthroughs in AI, including winning the Go game with a human world-champion~\cite{alphago} and creation of deep~Q-learning, to which the next chapter is dedicated.
