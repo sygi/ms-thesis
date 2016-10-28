@@ -1,6 +1,10 @@
 *.bbl
+*.blg
+*.tdo
 *.out
 *.toc
 *.log
 *.xml
 *.aux
+*.swp
+*.bak
