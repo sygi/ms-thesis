@@ -1,12 +1,12 @@
 \begin{appendices}
   
 \chapter{ICM cluster setup}\label{icm}
-Most of the experiments we executed during the project, were ran on a cluster of Interdisciplinary Centre for Mathematical and Computational Modelling of University of Warsaw (known as ICM). We got a lot of experience using these machines and decided to write it up in this appendix in the hope that it may be a useful guide for someone else doing a deep learning project using the ICM's architecture.
+Most of the experiments we executed during the project were ran on a cluster of Interdisciplinary Centre for Mathematical and Computational Modelling of University of Warsaw (known as ICM). We got a lot of experience using these machines and decided to write it up in this appendix in the hope that it may be a useful guide for someone else doing a deep learning project using the ICM's architecture.
 
 \section{Hardware architecture}
-  ICM owns a couple of computing clusters for different purpose. We used the only one containing GPU cards: Grom \cite[in polish]{grom-icm}. It contains an ssh server and a number of computational nodes. You can ssh to the ssh server only, and from there you can insert a job into a Slurm \cite{slurm} queue. A job can be an interactive bash session, which is very convenient to try things out.
+  ICM owns a couple of computing clusters for different purposes. We used the only one containing GPU cards: Grom~\cite[in polish]{grom-icm}. It contains an ssh server and a number of computational nodes. You can ssh to the ssh server only, and from there you can insert a job into a Slurm~\cite{slurm} queue. A job can be an interactive bash session, which is very convenient to try things out.
   
-  The specification of the job is done using Slurm format, but the commands to execute can be any bash commands. One flag worth to mention is \texttt{--gres}, which allows to specify request for GPU. You can see an example Slurm job specification in listing \cite{slurm-file}.
+  The specification of the job uses Slurm format, but the commands to execute can be any bash commands. One flag worth to mention is \texttt{-{}-gres}, which allows to specify request for GPU. You can see an example Slurm job specification in listing~\ref{slurm-file}.
 
   \begin{lstlisting}[language=bash, caption={Example Slurm job specification}, label={slurm-file}]
 #!/bin/bash -l
@@ -24,19 +24,19 @@ source /icm/home/sygnowsk/dqn/deep_q_rl/venv/bin/activate
 python run_sygi.py -r enduro.bin --network-type big_ram
 \end{lstlisting}
 
-The job will be executed on one of the $24$ computational nodes, each having $2$ NVIDIA GTX $480$ cards. During our experiments, to fully utilize the resources, we limited the memory and GPU number requirements to be able to run two experiments in each node in parallel.
+The job will be executed on one\footnote{It is possible to reserve more nodes for one job, but we didn't use that feature.} of the $24$~computational nodes, each having $2$~NVIDIA~GTX~$480$ cards. During our experiments, to fully utilize the resources, we limited the memory and GPU number requirements to be able to run two experiments in each node in parallel.
 
 \section{Software stack}
-  The operating system installed on the Grom cluster is CentOS6. The main system is quite raw, and to make use of it, one needs to use modules, loaded with \texttt{module load NAME}, with compilers, libraries, etc.
+  The operating system installed on the Grom cluster is CentOS6. The main system is quite raw, and to make use of it, one needs to use modules (loaded using command \texttt{module load NAME}) with compilers, libraries, etc.
 
-  During the first try to run DQN we tried to use the code provided by the authors of the algorithm, which was written in Torch. Even though Lua, as well as its package manager luarocks was installed on the system, we were having hard time installing the code dependencies without root privileges.
+  During the first try to run DQN we wanted to use the code provided by the authors of the algorithm, which was written using Torch. Even though Lua, as well as its package manager luarocks was installed in the system, we were having hard time installing the code dependencies without root privileges.
 
-  Due to these problems, we decided to move to code based on Theano, which is a python code. We downloaded a standalone python script enabling \texttt{virtualenv}, which allows to encapsulate a project's python dependencies in a local directory, making it possible to install python libraries locally. The only library we had to install from sources was OpenCV, whose python version: \texttt{opencv2} is just a wrapper around the regular OpenCV and expects the library to be already installed in the system.
+  Due to these problems, we decided to move to code based on Theano, which is based on python. We downloaded a standalone python script enabling \texttt{virtualenv}, which allows to encapsulate a project's python dependencies in a local directory, making it possible to install python libraries locally. The only library we had to install from sources was OpenCV, whose python version: \texttt{opencv2} is just a wrapper around the regular OpenCV and expects the library to be already installed in the system.
 
 \section{Running experiments}
-  The result of running the code with experiment was a dictionary with a file listing the results of training after each epoch, one file per epoch with the network parameters, as well as a Slurm file with output from stdout and stderr. The parameters were serialized using python package \texttt{pickle}.
+  The result of running the experiment was a directory with a file listing the results of training after each epoch and one file per epoch with the network parameters, as well as a Slurm file with output from stdout and stderr. The parameters were serialized using python package \texttt{pickle}.
 
-  As one job usually took a day or two to finish, it was often the case, that there was a number of jobs in progress and it was hard to distinguish, which was which. To tackle this problem we updated the code to output not only evaluation results, but also all the hyperparameters of the model.
+  As one job usually took a day or two to finish, it was often the case that there was a number of jobs in progress and it was hard to distinguish, which was which. To tackle this problem we updated the code to output not only evaluation results, but also all the hyperparameters of the model.
 
   After we finished our experiments, a company deepsense.io released a tool: Neptune, which aims to simplify management of experiments.
 

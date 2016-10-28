@@ -1,29 +1,29 @@
 \chapter{Conclusions and Future work}\label{conclusions}
-We trained two neural network agents as well as their variations to play Atari $2600$ games: Breakout, Seaquest and Bowling. The agents used not the screen, but the information stored in the memory of the console to decide on moves. In all games, the RAM agents were on a par with the screen-only agent \texttt{nips} presented in \cite{nips-dqn}.
+We trained two neural network agents as well as their variations to play Atari~2600 games: Breakout, Seaquest and Bowling. The agents used not the screen, but the information stored in the memory of the console to decide on moves. In all games, the RAM agents were on a par with the screen-only agent \texttt{nips} presented in~\cite{nips-dqn}.
 
 In the case of Seaquest and Bowling even a simple \texttt{just\_ram} model with an appropriately chosen frameskip parameter, as well as a bigger model \texttt{big\_ram} performed better than the benchmark agent. In the case of Breaout, the results are below the \texttt{nips} agent, but still were reasonable.
 
 \section{Future work}
-Due to limitations in the computing power we had, as well as the novel aspect of the research, our study had a preliminary character. Here we present a number of ideas to extend our work.
+Due to limitations in the computing power we had, as well as the novel aspect of the research, our study has a preliminary character. Here we present a number of ideas to extend our work.
 
 \subsection{Other games}
-The number of Atari games can be counted in hundreds, yet we only tested our agents on $3$ of them. It may be interesting to see how the results transfer to other games, like Pacman or Space Invaders and what aspect of the game tactics the agents are able to learn in these games.
+The number of Atari games can be counted in hundreds, yet we only tested our agents on $3$~of them. It may be interesting to see how the results transfer to other games, like Pacman or Space Invaders and what aspects of the game tactics the agents are able to learn in these games.
 
 \subsection{Better architectures and hyperparameters}
-The works \cite{nature-dqn, double-dqn, shallow-dqn, duelling-dqn} introduced more 
-involved ideas to improve Deep Q-learning. We would like to see if these improvements transfer to the RAM models.
+The works~\cite{nature-dqn, double-dqn, shallow-dqn, duelling-dqn} introduced more 
+involved ideas to improve deep Q-learning. We would like to see if these improvements transfer to the RAM models.
 
-It would be also interesting to spend more time tuning hyperparameters to potentially uncover the real potential of our method. In particular, we are interested in:
+It would be also interesting to spend more time tuning hyperparameters to possibly uncover the real potential of our method. In particular, we are interested in:
 \begin{itemize}
   \item trying more complex, deeper architectures for processing RAM,
-  \item improving stability of learning and reducing the variance, potentially with the usage of batch normalization \cite{batchnorm},
+  \item improving stability of learning and reducing the variance, potentially with the usage of batch normalization~\cite{batchnorm},
   \item more effective joining of information from the screen and memory,
-  \item considering unsupervised pretraining, using practically infinite stream of RAM states to learn autoencoder, that can help better initialize our models.
+  \item considering unsupervised pretraining, using practically infinite stream of RAM states to learn an autoencoder, that can help to better initialize our models \cite{autoencoders}.
 \end{itemize}
 
-\subsection{RNN}
-To train agents in non-markovian enrironments (called \emph{partially observable} Markov decision processes), one can use a recurrent neural network that is able to ``remember'' some function of the previous states.
+\subsection{Recurrent neural network}
+To train agents in non-markovian enrironments (called \emph{partially observable} Markov decision processes), one can use a recurrent neural network that is able to ``remember'' some function of the previous states~\cite{minecraft-pomdp}.
 
-While RAM-based models satisfy markovian assumption (as argued in section \ref{our-frameskip}), it may still be beneficial to the progress of training to model Q-function using a RNN. This way, agent could decide that it will be repeating a given action or following a pattern of actions without the need to costantly receive encouraging signal from the RAM state.
+While RAM-based models satisfy markovian assumption (as argued in section~\ref{our-frameskip}), it may still be beneficial to the progress of training to model Q-function using a RNN. This way, agent could e.g. decide that it will be repeating a given action or following a pattern of actions without the need to costantly receive encouraging signal from the RAM~state.
 
 \optional{frameskip + attention}
