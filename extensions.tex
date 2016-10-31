@@ -64,21 +64,20 @@ We performed the experiments with reduction of learning rate from~$0.0002$ to~$0
   \toprule
   &\ Breakout\ &\ Seaquest & Bowling \\
   \midrule
-  \texttt{just\_ram} best & $137.67$ & $1233.33$ & $TODO$ \\
-  \texttt{big\_ram} best  & $112.14$ & $2675$ & $TODO$ \\
+  \texttt{just\_ram} best & $137.67$ & $1233.33$ & $51.5$ \\
+  \texttt{big\_ram} best  & $112.14$ & $2675$ & $59.25$ \\
   \bottomrule
 \end{tabularx}
 \caption{Summary of test results for modified learning rate.}
 \label{table:rate}
 \end{table}
-\todoi{bowling smaller learning rate}
 \section{Frameskip}\label{our-frameskip}
 In the benchmark agent \texttt{nips}, authors use the frameskip (see section~\ref{frameskip} for definition of frameskip) value of~$4$ and pass for training \emph{all} $4$~frames before the action to handle ``blinking'' behavior of Atari machine, i.e. showing some objects only every couple of frames.
 In the case of learning from memory there is no loss of information when previous RAM~states are ignored. Hence in our models we only pass to the network the RAM~state corresponding to the last frame before a given action. We made some limited experiments passing all previous \texttt{frameskip} RAM~states to the network, but the results were worse than when passing only the last one. We still used frameskip of~$4$ in the basic experiments.
 
 The work~\cite{frameskip} suggests that choosing the right frameskip has a big influence on the performance of a model (see also~\cite{microsoft-frameskip}). We decided to try two bigger values of frameskip: $8$ and~$30$, corresponding to deciding on actions~$5$ and~$2$ times a second.
 
-The figure~\ref{fig:seaquest-frameskip} and table~\ref{table:results-frameskip} show a significant improvement of the \texttt{just\_ram} model in Seaquest. Quite surprisingly, the variance of the results appeared to be much lower for higher frameskip.
+The figure~\ref{fig:seaquest-frameskip} and table~\ref{table:results-frameskip} show a significant improvement of the \texttt{just\_ram} model in Seaquest, as well as the \texttt{big\_ram} model for Bowling. Quite surprisingly, the variance of the results appeared to be much lower with higher frameskip for all tested models.
 
 \begin{figure}[h]
 \centering
@@ -116,13 +115,13 @@ $\texttt{frameskip} = 8$ and  $\texttt{frameskip} = 30$ for the model \texttt{ju
   \toprule
    &\ Breakout\ &\ Seaquest\ & Bowling \\
   \midrule
-  \texttt{just\_ram} with \texttt{FRAME SKIP} $8$ best & $82.87$  & $2064.44$ & $TODO$\\
-  \texttt{just\_ram} with \texttt{FRAME SKIP} $30$ best & -  & $2093.24$ & $TODO$\\
-  \texttt{big\_ram} with \texttt{FRAME SKIP} $8$ best & $102.64$ & $2284.44$ & $TODO$ \\
-  \texttt{big\_ram} with \texttt{FRAME SKIP} $30$ best & - & $2043.68$ & $TODO$\\
+  \texttt{just\_ram} with \texttt{frameskip} $8$ best & $82.87$  & $2064.44$ & $54.56$\\
+  \texttt{just\_ram} with \texttt{frameskip} $30$ best & -  & $2093.24$ & $todo$\\
+  \texttt{big\_ram} with \texttt{frameskip} $8$ best & $102.64$ & $2284.44$ & $\textbf{70.78}$ \\
+  \texttt{big\_ram} with \texttt{frameskip} $30$ best & - & $2043.68$ & $todo$\\
   \bottomrule
 \end{tabularx}
-\caption{Table summarizing test results for training which involves higher \texttt{frameskip} value. For Breakout \texttt{frameskip}$
+\caption{Table summarizing test results for training which involves higher \texttt{frameskip} value. For Breakout $\texttt{frameskip} 
 =30$ does not seem to be a suitable choice.}
 \label{table:results-frameskip}
 \end{table}
@@ -193,15 +192,14 @@ output $\leftarrow$ DenseLayer(hidden4, numActions, no activation)\;
 
 The results, which are presented in table~\ref{table:mixed} are reasonable, but not impressive. In particular, we did not see any improvement over the benchmark \texttt{nips} agent, which is embedded into both mixed architectures. This suggests that in \texttt{mixed\_ram} and \texttt{big\_mixed\_ram} models the additional information about the RAM state is not used in a productive way.
 
-\todoi{Show the numerical results for mixed Bowling}
 \begin{table}[h]
 \centering
 \begin{tabularx}{0.7\textwidth}{ X c c c }
   \toprule
   &\ Breakout\ &\ Seaquest\ & Bowling \\
   \midrule
-  \texttt{mixed\_ram} best & $143.67$ & $488.57$ & $TODO$\\
-  \texttt{big\_mixed\_ram} best  & $67.56$ & $1700$ & $TODO$\\
+  \texttt{mixed\_ram} best & $143.67$ & $488.57$ & $39.5$\\
+  \texttt{big\_mixed\_ram} best  & $67.56$ & $1700$ & $45.5$\\
   \bottomrule
 \end{tabularx}
 \caption{Table summarizing test results for methods combining information from the screen and from the memory.}
