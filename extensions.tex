@@ -116,17 +116,15 @@ $\texttt{frameskip} = 8$ and  $\texttt{frameskip} = 30$ for the model \texttt{ju
    &\ Breakout\ &\ Seaquest\ & Bowling \\
   \midrule
   \texttt{just\_ram} with \texttt{frameskip} $8$ best & $82.87$  & $2064.44$ & $54.56$\\
-  \texttt{just\_ram} with \texttt{frameskip} $30$ best & -  & $2093.24$ & $todo$\\
+  \texttt{just\_ram} with \texttt{frameskip} $30$ best & -  & $2093.24$ & $54.36$\\
   \texttt{big\_ram} with \texttt{frameskip} $8$ best & $102.64$ & $2284.44$ & $\textbf{70.78}$ \\
-  \texttt{big\_ram} with \texttt{frameskip} $30$ best & - & $2043.68$ & $todo$\\
+  \texttt{big\_ram} with \texttt{frameskip} $30$ best & - & $2043.68$ & $61.9$\\
   \bottomrule
 \end{tabularx}
 \caption{Table summarizing test results for training which involves higher \texttt{frameskip} value. For Breakout $\texttt{frameskip} 
 =30$ does not seem to be a suitable choice.}
 \label{table:results-frameskip}
 \end{table}
-
-\todoi{bowling results}
 
 As noticed in~\cite{frameskip}, in the case of Breakout high frameskips, such as~$30$ lead to a disastrous performance, thus we tested only frameskip~$8$ and for it we received slightly weaker results than with a baseline frameskip~$4$.
 
