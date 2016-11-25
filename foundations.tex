@@ -8,13 +8,13 @@ This chapter discusses these methods, as well as describes the Atari machine, as
 To create an algorithm learning to play a game or solve any other problem, we first have to formally define what the problem is. We will model Atari games within the framework called reinforcement learning. The main property distinguishing reinforcement learning problems from supervised learning (prediction) and unsupervised learning (clustering) is presence of two separate entities: the \emph{environment} and the \emph{agent}.
 
 The environment is the physics or the rules of the game. It presents state, which can be any description of the game, to the agent, scores its action and provides him with the following state.
-The agent is the algorithm we prepare. It receives a state it is in from the environment, decides which action to choose there and receives the appropriate reward. Every move happens in a discrete moments of time.
+The agent is the algorithm we prepare. It receives a state it is in from the environment, decides which action to choose there and receives the appropriate reward. Every move happens in a discrete moments of time.\todo{What about Cartpole and similar games?'}
 
 The aim of the creator of the reinforcement learning algorithm is to invent a way to map the game state for each time~$t$: $s_t$ to the action~$a_t$ (possibly storing some inner state), so that the sum:
 \begin{equation} \label{discounted-reward}
 \sum_{k=0}^{\infty} \gamma^k r_{t + k}
 \end{equation}
-is maximized. $r_T$ is the reward received after doing action~$a_T$ in state~$s_T$ The exponential averaging is called a \emph{discounted} sum, and $0 < \gamma \le 1$ called a \emph{discount factor} corresponds to the level of comfort we have with receiving the awards not now, but in the future. This resembles the way people evaluate their gains---if one is promised a constant amount of money, he'd prefer to receive it rather earlier than later. We assume that every game eventually will find itself in a \emph{terminal} state, which always transitions to a terminal state and gives reward of~$0$. One such progression from the start of the game to reaching a terminal state is called an \emph{episode}.
+is maximized. Number $r_T$ is the reward received after doing action~$a_T$ in state~$s_T$. The exponential averaging is called a \emph{discounted} sum, and $0 < \gamma \le 1$ called a \emph{discount factor} corresponds to the level of comfort we have with receiving the awards not now, but in the future. This resembles the way people evaluate their gains---if one is promised a constant amount of money, he'd prefer to receive it rather earlier than later. We assume that every game eventually will find itself in a \emph{terminal} state, which always transitions to a terminal state and gives reward of~$0$. One such progression from the start of the game to reaching a terminal state is called an \emph{episode}.
 
 Both agent and environment are not bound to make their decisions deterministically---in fact, it may be favorable for the agent to play randomly to some extent. In the stochastic case, the aim of the agent is to maximize the discounted sum of expected value of the rewards.
 
@@ -35,7 +35,7 @@ This simplifying assumption can be summarized as ``agent has all the information
 
 In the case of Atari games played based on the RAM~state, the MDP assumptions are satisfied. The code of the game (saved on ROM), together with a random seed for the game define a deterministic function transforming the RAM (the game state) and awarding rewards.
 
-It is worth noting that the algorithms based on markovian assumption (TD-learning, Q-learning, Markov Chain Monte Carlo) are often used despite the violation of this assumption by the environment. The intuition behind that when the state contains enough information for agent to reasonably approximate the next state and reward distribution, it doesn't matter the approximation will not be accurate. One example of this fact is when we train agents to play Atari games based on the screen state~\cite{nips-dqn}---the player moves influence the inner state (RAM) of the machine, but the changes may not be immediately apparent on the screen. Still, the game screen gives a lot of information about the game state needed to make an action, thus agent can fairly skillfully learn to make good decisions.
+It is worth noting that the algorithms based on markovian assumption\todo{Define markovian assumption as a seperate definition?} (TD-learning, Q-learning, Markov Chain Monte Carlo) are often used despite the violation of this assumption by the environment. The intuition behind that when the state contains enough information for agent to reasonably approximate the next state and reward distribution, it doesn't matter the approximation will not be accurate. One example of this fact is when we train agents to play Atari games based on the screen state~\cite{nips-dqn}---the player moves influence the inner state (RAM) of the machine, but the changes may not be immediately apparent on the screen. Still, the game screen gives a lot of information about the game state needed to make an action, thus agent can fairly skillfully learn to make good decisions.
 
 \section{Q-learning}\label{qlearning}
 Let's call the function (distribution) mapping the current state~$s$ to the action~$a$ chosen by the agent \emph{a~strategy} (or \emph{policy})~$\pi$.
@@ -71,6 +71,7 @@ The strategy~$\pi$ is optimal (maximizes the expected discounted reward) if and 
 \end{equation}
 for all state-action pairs.
 \optional{Prove that fact: left -- for optimal strategy we can do greedy actions, right -- assume strategy is not optimal but property satisfied, then there's a better strategy that does different action somewhere, but this action leads to lower Q}
+\todo{formulate as a theorem}
 
 Q-learning is a representative of a general domain of algorithms called Generalized Policy Iteration (see~\cite[Chapter~4.6.]{reinforcement-book}). Their approach is to take turns between updating the estimation of the value of the states (in our case Q-values) and updating the strategy to take into account new state value estimation.
  
@@ -104,7 +105,7 @@ It consists of a couple of \emph{layers}:\footnote{In the current state-of-the-a
   \caption{Architecture of nodes in a feedforward neural network. Each node receives the outputs of the previous layer.}\label{ann-layers} 
 \end{figure}
 
-A layer is a composed of \emph{nodes} (also called \emph{neurons}). A node accepts as input the previous layer's nodes' outputs, calculates a linear combination of them and applies a nonlinear function, called \emph{activation} function to the result (see~\ref{ann-nodes}). The typical choices for the activation function are sigmoid: $\frac{1}{1 + e^{-x}}$, hyperbolic tangent, and (popularized recently) rectified linear unit (ReLU): $\max(0, x)$.\footnote{A thorough, yet comprehensible discussion of the various activation functions can be found in~\cite{cs231-actfun}.}
+A layer is a composed of \emph{nodes} (also called \emph{neurons}). A node accepts as input the previous layer's nodes' outputs, calculates a linear combination of them and applies a nonlinear function, called \emph{activation} function to the result (see~\ref{ann-nodes}). The typical choices for the activation function are sigmoid: $\frac{1}{1 + e^{-x}}$, hyperbolic tangent, and (popularized recently) rectified linear unit (ReLU): $\max(0, x)$.\footnote{A thorough, yet comprehensible\todo{easy to understand} discussion of the various activation functions can be found in~\cite{cs231-actfun}.}
 \begin{figure}[h]
   \centering
   \resizebox{0.7\textwidth}{!}{
@@ -137,7 +138,7 @@ The equation~\eqref{chain rule} suggests an order of calculating the derivatives
   \underbrace{\sum_{i} -2(y_i - \text{output}(x_i)) * \text{sigmoid'}(\sum_j w_{\text{output}, j} \cdot \text{hidden}(x_i, j)) * \sum_j \text{hidden}(x_i, j)}_{\sum_j \frac{\partial L}{\partial w_{\text{output}, j}}} * \frac{\partial}{\partial w_{\text{input}, 1}}\ldots
 \end{multline}
 
-Because the process of gradient calculation proceeds from the end of the network toward the beginning, it is called \emph{backpropagation} or \emph{backward~pass} (in contrast to \emph{forward} pass, when the network is evaluating outputs).
+Because the process of gradient calculation proceeds from the end of the network toward the beginning, it is called \emph{backpropagation} or \emph{backward~pass} (in contrast to \emph{forward} pass, when the network is evaluating outputs).\todo{Use $\cdot$ as multiplcation}
 
 The calculation of a full loss, based on all examples can be infeasible: current datasets often consist of tens of gigabytes of data (see e.g.~coco challenge dataset:~\cite{coco-dataset}) and to train a network it is often needed to make a couple of thousands of parameter updates.
 To speed the process up, it is common to approximate the full loss function (thus the gradients, too) by a loss calculated on a random subset of data examples. More often than not, a random subset of $100$~examples will possess statistical properties indistinguishable from the whole dataset, leading to accurate (and fast to obtain) estimates of gradients. This process is called \emph{minibatch} training (and the whole algorithm a \emph{stochastic}~gradient~descent) and the size of the \emph{batch} is another hyperparameter of the model. There is a trade-off in its choice---bigger batch size gives better gradient estimates, but takes longer to calculate.
@@ -161,7 +162,7 @@ One can summarize this section by presenting a stochastic gradient descent pseud
 The neural networks were not often applied in modelling until recently. There was a number of factors which contributed to their current successes. In this section we describe shortly the most important of them.
 
 \subsection{Computing power}
-Creating top prediction or classification models requires a lot of computation power.\footnote{Deep learning community jokes that the time to train a state-of-the-art model stays a week, regardless of the increase in the computing power.} Neural networks, with their big expression power can provide good results, but only when supplied with enough data. When we pass a little data to a deep neural network, we can often see an \emph{overfitting} effect---the model performs well on the data it saw (training data), but generalizes poorly to unseen examples (test data).
+Creating top\todo{Maybe better good models?'} prediction or classification models requires a lot of computation power.\footnote{Deep learning community jokes that the time to train a state-of-the-art model stays a week, regardless of the increase in the computing power.} Neural networks, with their big expression power can provide good results, but only when supplied with enough data. When we pass a little data to a deep neural network, we can often see an \emph{overfitting} effect---the model performs well on the data it saw (training data), but generalizes poorly to unseen examples (test data).
 
 In a world with limited computation power, best results will be biased towards simpler models, like linear regression, random forest, or support vector machines. Out of the whole continuum of~$R^n \rightarrow R^m$ functions, elementary models will pick a small subset of smooth, easy, reasonable ones and will pick the best one with the use of limited data. As the subset of functions that can be expressed is small, they are quite different from each other and it is easy for the model to pick the best function.
 
@@ -182,7 +183,7 @@ The speed of convergence of vanilla stochastic gradient descent can be improved 
 
 There are a lot of improvements of the SGD to faster move in the optimization space in the situations like this. They include momentum~\cite{momentum}, Adam~\cite{adam}, or Adadelta~\cite{adadelta}. I will describe RMSProp~\cite{rmsprop}, the algorithm that we use in our code. One can read about the others in~\cite[chapter 8.3.]{dlbook} in detail.
 
-\subsubsection{RMSProp}\label{rmsprop-section}
+\subsubsection{RMSProp}\label{rmsprop-section}\todo{Check from where comes RMS}
 The basic idea of RMSProp is dividing the gradient by the square root of the sum of previous gradients' squares pointwise. This way the directions which keep having high gradients in the course of training, will be scaled more and more and directions will low gradients will be more and more ``preferred'' to traverse along.
 
 To prevent vanishing the learning rate too much and significantly slowing down the learning near the end, instead of calculating the sum, RMSProp stores the exponential average of the history of gradients' squares.
