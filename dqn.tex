@@ -14,7 +14,7 @@ To model a problem with a neural network, we have to define a differential loss 
 \begin{equation}\label{dqn-loss}
   L(\theta_t) = \mathbb{E}_{s_t, a_t, s_{t+1}} \big(r_t + \gamma \max_b Q(s_{t+1}, b|\theta_{t-1}) - Q(s_t, a_t|\theta_t)\big)^2
 \end{equation}
-
+\todo{Put it as a definition and underline that $t$ comes from the context; say that we want to approximate it. Is there a theorem about the learning process with $L(\Theta_t)$? Maybe add that optimal strategies have this loss $0$.}
 Let's explain notation in more detail. $Q$ is the function mapping state-action pairs to the estimation of their value (expected discounted reward). In our case the role of~$Q$ will be fulfilled by a neural network. The part~$|\theta_t$ comes from the fact that the values of~$Q$ function will be dependent on the current parameters $\theta_t$ of the network. $t$~is the discrete time in the episode. We define loss with regard to the parameters in time~$t$ ($L(\theta_t)$) using the current parameters~$\theta_{t-1}$---we want to be able to estimate ``goodness'' of any new parameters~($\theta_t$) based on~$\theta_{t-1}$. The estimation~sign~$\mathbb{E}_{s_t, a_t}$ comes from the fact we will not score all the state-action~pairs, but rather the ones that appear in real games. In fact, a more appropriate notation would be to sum over all the observed state-action~pairs; the current one is used to simplify notation.
 
 We can differentiate the loss function with respect to the parameters:
