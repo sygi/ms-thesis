@@ -25,5 +25,3 @@ It would be also interesting to spend more time tuning hyperparameters to possib
 To train agents in non-markovian environments (called \emph{partially observable} Markov decision processes), one can use a recurrent neural network that is able to ``remember'' some function of the previous states~\cite{minecraft-pomdp}.
 
 While RAM-based models satisfy markovian assumption (as argued in section~\ref{our-frameskip}), it may still be beneficial to the progress of training to model Q-function using a RNN. This way, agent could e.g. decide that it will be repeating a given action or following a pattern of actions without the need to constantly receive encouraging signal from the RAM~state.
-
-\optional{frameskip + attention}

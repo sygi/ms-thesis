@@ -6,22 +6,29 @@ With raw Atari frames of size~$210 \times 160 \times 3$ (width $\times$ height $
 \begin{equation}
   \mbox{\# states} = 128^{210*160*3} \approx (2^7)^{2^{16}} \approx 2^{2^{18}} \approx 2^{256000}
 \end{equation}\label{number-frame-states}
-which is way to much to store in this universe, not to mention process multiple times on a computer.
+which is way too much to store in this universe, not to mention process multiple times on a computer.
 
 Main idea of deep Q-learning is to use some form of generalization between states. This way, seeing a reward in a given state-action pair, we will get information not only about this particular state, but about similar states as well. This will also let us to store the Q-value function in a concise form, alleviating the exponential state explosion problem outlined above.
 
-To model a problem with a neural network, we have to define a differential loss function to minimize (compare section~\ref{gradient descent}). In the case of deep Q-learning, a natural choice is some function of the difference between left- and right-hand sides of equation~\eqref{qlearning-property} (we know that the optimal strategies have this difference equal to~$0$), so a mean of squares of these differences was choosen:
-\begin{equation}\label{dqn-loss}
-  L(\theta_t) = \mathbb{E}_{s_t, a_t, s_{t+1}} \big(r_t + \gamma \max_b Q(s_{t+1}, b|\theta_{t-1}) - Q(s_t, a_t|\theta_t)\big)^2
+We decide to use a neural network as an approximator of the Q-value function. As we have no supervised signal about the values of the Q function, we use the theorem \ref{qlearning-theorem}---we know that the characteristic property of optimal strategies $\pi$ is:
+\begin{equation}
+  r_t + \gamma \max_b Q^\pi(s_{t+1}, b) - Q^\pi(s_t, a_t) = 0
 \end{equation}
-\todo{Put it as a definition and underline that $t$ comes from the context; say that we want to approximate it. Is there a theorem about the learning process with $L(\Theta_t)$? Maybe add that optimal strategies have this loss $0$.}
-Let's explain notation in more detail. $Q$ is the function mapping state-action pairs to the estimation of their value (expected discounted reward). In our case the role of~$Q$ will be fulfilled by a neural network. The part~$|\theta_t$ comes from the fact that the values of~$Q$ function will be dependent on the current parameters $\theta_t$ of the network. $t$~is the discrete time in the episode. We define loss with regard to the parameters in time~$t$ ($L(\theta_t)$) using the current parameters~$\theta_{t-1}$---we want to be able to estimate ``goodness'' of any new parameters~($\theta_t$) based on~$\theta_{t-1}$. The estimation~sign~$\mathbb{E}_{s_t, a_t}$ comes from the fact we will not score all the state-action~pairs, but rather the ones that appear in real games. In fact, a more appropriate notation would be to sum over all the observed state-action~pairs; the current one is used to simplify notation.
+
+Thus, we define the loss function the network (compare section~\ref{gradient descent}) as the square of the left-hand side of the above equation. We hope that by minimizing this value, the strategy will become close to the optimal one. 
+\begin{definition}{Loss function} of the neural network with regards to its parameters $\theta_t$ in time $t$:
+  \begin{equation}\label{dqn-loss}
+    L(\theta_t) = \mathbb{E}_{s_t, a_t, s_{t+1}} \big(r_t + \gamma \max_b Q(s_{t+1}, b|\theta_{t-1}) - Q(s_t, a_t|\theta_t)\big)^2
+  \end{equation}
+\end{definition}
+
+Let's explain notation in more detail. $t$ is the discrete time describing changing frames of the game; it is used only to distinguish previous ($s_t$) and next ($s_{t+1}$) state as well as previous ($\theta_{t-1}$) and current ($\theta_t$) parameters. $Q$ is the function mapping state-action pairs to the estimation of their value (expected discounted reward). The role of~$Q$ is fulfilled by a neural network. The part~$|\theta_t$ comes from the fact that the values of~$Q$ function are be dependent on the parameters~$\theta_t$ of the network. We treat previous parameters~$\theta_{t-1}$ as fixed, so the only trainable parameters in~$L$ are~$\theta_t$. The estimation~sign~$\mathbb{E}_{s_t, a_t}$ comes from the fact we will not score all the state-action~pairs, but rather the ones that appear in real games. In fact, a more appropriate notation would be to sum over the observed state-action~pairs; the current one is used to simplify notation.
 
 We can differentiate the loss function with respect to the parameters:
 \begin{multline}
-  \nabla_{\theta_t} L(\theta_t) = \nabla_{\theta t}\, \mathbb{E}_{s_t, a_t, s_{t+1}} \big(r_t + \gamma \max_b Q(s_{t+1}, b|\theta_{t-1}) - Q(s_t, a_t|\theta_t)\big)^2
+  \nabla_{\theta_t} L(\theta_t) = \nabla_{\theta_t}\, \mathbb{E}_{s_t, a_t, s_{t+1}} \big(r_t + \gamma \max_b Q(s_{t+1}, b|\theta_{t-1}) - Q(s_t, a_t|\theta_t)\big)^2
  =\\=
-  \mathbb{E}_{s_t, a_t, s_{t+1}} \nabla_{\theta t} \big(r_t + \gamma \max_b Q(s_{t+1}, b|\theta_{t-1}) - Q(s_t, a_t|\theta_t)\big)^2
+  \mathbb{E}_{s_t, a_t, s_{t+1}} \nabla_{\theta_t} \big(r_t + \gamma \max_b Q(s_{t+1}, b|\theta_{t-1}) - Q(s_t, a_t|\theta_t)\big)^2
   =\\=
   \mathbb{E}_{a_t,s_t, s_{t+1}} 2\Big(
   r_t + \gamma \max_b Q(s_{t+1}, b|\theta_{t-1}) - Q(s_t, a_t|\theta_t)\Big)
@@ -31,7 +38,7 @@ We can differentiate the loss function with respect to the parameters:
 Note that $\theta_{t-1}$ is treated as a constant with respect to~$\theta_t$. Even though this derivation is unnecessary to implement deep Q-learning (as it is usually done by a library), it gives some intuition about how our optimization algorithm will work.
 
 $Q(s, a|\theta)$ will be implemented as a neural network that accepts the state of the game and returns a multidimensional vector---each coordinate will correspond to a Q-value of one action. At each time step, we will query the network with current state and make the action with the highest Q-value.
-Then, we will collect tuples:~$s_t, a_t, r_t, s_{t+1}$ of current state, performed action, received (immediate) reward and the next state. To use such a tuple to decrease the loss~\eqref{dqn-loss}, we will calculate $\max_b Q(s_{t+1}, b)$ and~$Q(s_t, a)$ in a forward pass through the network, and $\nabla_{\theta_t} Q(s_t, a_t)$ using backpropagation (starting from the output node corresponding to the chosen action). We will use these expressions to calculate the derivative of the loss~$\nabla_{\theta_t} L(\theta_t)$ and update the parameters using RMSProp---a modification of gradient~descent described in section~\ref{rmsprop-section}.
+Then, we will collect tuples:~$s_t, a_t, r_t, s_{t+1}$ of current state, performed action, received (immediate) reward and the next state. To use such a tuple to decrease the loss~\eqref{dqn-loss}, we will calculate $\max_b Q(s_{t+1}, b)$ and~$Q(s_t, a_t)$ in a forward pass through the network, and $\nabla_{\theta_t} Q(s_t, a_t)$ using backpropagation (starting from the output node corresponding to the chosen action). We will use these expressions to calculate the derivative of the loss~$\nabla_{\theta_t} L(\theta_t)$ and update the parameters using RMSProp---a modification of gradient~descent described in section~\ref{rmsprop-section}.
 
 The core algorithm, defined above, is not powerful enough to learn to successfully play Atari games using screen output. To make it work better, authors employed a couple of improvements, described below.
 
@@ -46,8 +53,6 @@ In this situation, our basically random choice at the start of training influenc
 One of the solution to this problem, is, instead of using a greedy strategy (choosing the actions with the best Q-values), to use so called $\varepsilon$-greedy~strategy---to choose a random action with probability~$\varepsilon$, and with probability~$1 - \varepsilon$ the one with the highest Q-value estimation. By choosing~$\varepsilon$ we decide how much time we want our agent to spend on exploring new actions vs. exploiting the ones he knows are good.
 
 This technique is not uniquely associated with DQN; in fact it was used with bare Q-learning and other reinforcement learning algorithms from early on.
-
-\discussed
 
 \subsection{$\varepsilon$~decay}
 To set the exploration-exploitation trade-off in an appropriate place, the DQN inventors decided to use changing~$\varepsilon$, namely one decaying linearly from~$1$ to~$0.1$. This way, at the beginning of training, when the state value estimations are poor, the agent does more exploration of new actions and further in the game, he chooses the best action according to the Q-values of states more often. Note that the random actions are done only in the training part---when the performance of a trained agent is evaluated, a flat, low value of $\varepsilon=0.05$ is used.

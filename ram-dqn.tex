@@ -1,5 +1,5 @@
 \chapter{Deep Q-learning for RAM}\label{dqn-ram}
-In our work, we adapt DQN to learn not from the game screens, but rather from the RAM~state of the Atari machine. In the following sections we describe the previous work in the domain of playing Atari games using RAM and the details of our approach.\todo{Add citation to arxiv}
+In our work, we adapt DQN to learn not from the game screens, but rather from the RAM~state of the Atari machine. In the following sections we describe the previous work in the domain of playing Atari games using RAM and the details of our approach, explained also in the paper \cite{our-paper}.
 
 \section{Related work}
 In comparison to screen-based models, the models for playing Atari games based on RAM are not often studied in AI literature.
@@ -51,7 +51,7 @@ The experiments were performed on a GPU cluster of Interdisciplinary Centre for 
 \section{Hyperparameters and network architectures}
 \SetAlgorithmName{Neural network}{List of Neural networks}
 
-We have evaluated the performance of the DQN method for two neural network architectures. They serve as a Q-value approximator: accepting RAM as the input and returning estimates of Q-values of each possible action. We also made a limited number of experiments using networks accepting as an input both RAM and screen, which are described in section~\ref{screen-ram-networks}.
+We have evaluated the performance of the DQN method for two neural network architectures. They serve as a Q-value approximators: accepting RAM as the input and returning estimates of Q-values of each possible action. We also made a limited number of experiments using networks accepting as an input both RAM and screen, which are described in section~\ref{screen-ram-networks}.
 
 All the hyperparameters of the models we consider are the same as in~\cite{nips-dqn} if not mentioned otherwise (see appendix~\ref{hyperparams}). One change we made is to decrease of the size of the replay memory (see section~\ref{experience-replay}) to $10^5$~observations, so that it fits $1.5$GB of~NVIDIA~GTX~$480$ memory.\footnote{We made experiments with replay memory size of~$5\cdot 10^5$ and have not observed a statistically significant change in results.}
 
