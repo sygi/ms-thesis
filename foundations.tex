@@ -99,9 +99,9 @@ The update to the Q-values is being made to force more state-action pairs to sat
 \begin{equation}
   Q_{new}(s_t, a) := \alpha Q_{old}(s_t, a) + (1 - \alpha)\big(r(s_t, a) + \max_{a^*} Q_{old}(s_{t+1}, a^*)\big)
 \end{equation}
-$\alpha$ (also called step~size) is a parameter of the algorithm deciding how fast it should move the Q-value estimations toward the ones locally satisfying~\eqref{qlearning-property}. Bigger values lead to faster training, but the convergence proof for constant step~size requires sufficiently small $\alpha$~\cite[section~3.]{qlearning-old}. It was also shown in~\cite{qlearning-convergence}, that the Q-learning algorithm converges when the variable step~size satisfies:
+$\alpha$ (also called step~size) is a parameter of the algorithm deciding how fast it should move the Q-value estimations toward the ones locally satisfying~\eqref{qlearning-property}. Bigger values lead to faster training, but the convergence proof for constant step~size requires sufficiently small $\alpha$~\cite[section~3.]{qlearning}. It was also shown in~\cite{qlearning-convergence}, that (under the condition that each state-action pair is visited infinitely often) the Q-learning algorithm converges when the variable step~size satisfies:
 \begin{equation}
-  \sum_i \alpha_i = \infty, \;\;\;\; \sum_i \alpha_i^2 < \infty
+  \sum_t \alpha_t = \infty, \;\;\;\; \sum_t \alpha_t^2 < \infty
 \end{equation}
 
 
@@ -110,7 +110,7 @@ Many of the current advances in various domains of AI are the effect of improvem
 
 \subsection{Feedforward neural network}
 The simplest neural network, called \emph{feedforward} neural network or \emph{multilayer perceptron} was introduced in~60's~\cite{mlp}.
-It consists of a couple of \emph{layers}:\footnote{In the current state-of-the-art models, the number of layers reaches thousands, see e.g.~\cite{stochastic}} each layer accepts some inputs, processes them, and outputs them as an input for the next layer (see figure~\ref{ann-layers}). The first layer is called input layer, the last---output layer and all the layers in between---hidden layers.
+It consists of a couple of \emph{layers}:\footnote{In the current state-of-the-art models, the number of layers reaches thousands, see e.g.~\cite{stochastic}.} each layer accepts some inputs, processes them, and outputs them as an input for the next layer (see figure~\ref{ann-layers}). The first layer is called input layer, the last---output layer and all the layers in between---hidden layers.
 \begin{figure}[h]
   \centering
   \resizebox{0.6\textwidth}{!}{
@@ -194,8 +194,8 @@ The speed of convergence of vanilla stochastic gradient descent can be improved 
 
 There are a lot of improvements of the SGD to faster move in the optimization space in the situations like this. They include momentum~\cite{momentum}, Adam~\cite{adam}, or Adadelta~\cite{adadelta}. I will describe RMSProp~\cite{rmsprop}, the algorithm that we use in our code. One can read about the others in~\cite[chapter 8.3.]{dlbook} in detail.
 
-\subsubsection{RMSProp}\label{rmsprop-section}%\todo{Check from where comes RMS}
-The basic idea of RMSProp is dividing the gradient by the square root of the sum of previous gradients' squares pointwise. This way the directions which keep having high gradients in the course of training, will be scaled more and more and directions will low gradients will be more and more ``preferred'' to traverse along.
+\subsubsection{RMSProp}\label{rmsprop-section}
+The basic idea of RMSProp is to (pointwise) divide the gradient by the square root of the sum of previous gradients' squares. This way the directions which keep having high gradients in the course of training, will be scaled more and more and directions will low gradients will be more and more ``preferred'' to traverse along.
 
 To prevent vanishing the learning rate too much and significantly slowing down the learning near the end, instead of calculating the sum, RMSProp stores the exponential average of the history of gradients' squares.
 
@@ -216,7 +216,7 @@ The pseudocode of RMSProp can be found in algorithm~\ref{rmsprop-pseudo}.
 \end{algorithm}
 
 \subsection{Convenient libraries}
-Another factor causing deep learning models to rise is the creation of open source libraries for symbolic computation. A mere $6$~years~ago, if a student or a scientist wanted to experiment with neural network models, he had to implement the neural network as a couple of matrix multiplications, calculate the gradients on paper and backpropagate them in code, and implement a version of gradient descent. Not to mention that performing the computation on GPU using a direct memory manipulation like CUDA increased the code complexity twice.
+Another factor causing deep learning models to rise is the creation of open source libraries for symbolic computation. A mere $6$~years~ago, if a student or a scientist wanted to experiment with neural network models, he had to implement the neural network as a couple of matrix multiplications, calculate the gradients on paper and backpropagate them in code, and implement a version of gradient descent. Not to mention that performing the computation on GPU using a direct memory manipulation library like CUDA significantly increased the code complexity.
 
 Fortunately, around~$2010$ open source libraries, greatly simplifying the process of implementing deep learning models, started to appear. Currently there are $3$~such frameworks which are popular: Theano, Torch and Tensorflow.
 

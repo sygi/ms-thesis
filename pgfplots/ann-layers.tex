@@ -1,5 +1,14 @@
 \begin{tikzpicture}
-\usetikzlibrary{patterns}
+
+\node[] (cuda) at (-3, 2) {CUDA};
+\draw (theano) -> (cuda);
+\node[] (theano) at (-3, 1) {Theano};
+\node[] (lasagne) at (-3, 0) {Lasagne};
+
+\node[] at (0, 2) {Stella};
+\node[] at (0, 1) {ALE};
+\node[] at (0, 0) {OpenAI Gym};
+
 \begin{scope}[very thin]
 \foreach \x in {0, ..., 2} {
 \node[circle, draw, color=red, thick] (input \x) at (-3, \x) {};
