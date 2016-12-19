@@ -72,7 +72,7 @@ We performed the experiments with reduction of learning rate from~$0.0002$ to~$0
 \label{table:rate}
 \end{table}
 \section{Frameskip}\label{our-frameskip}
-In the benchmark agent \texttt{nips}, authors use the frameskip (see section~\ref{frameskip} for definition of frameskip) value of~$4$ and pass for training \emph{all} $4$~frames before the action to handle ``blinking'' behavior of Atari machine, i.e. showing some objects only every couple of frames.
+In the benchmark agent \texttt{nips}, authors use the frameskip (see section~\ref{dqn-frameskip} for definition of frameskip) value of~$4$ and pass for training \emph{all} $4$~frames before the action to handle ``blinking'' behavior of Atari machine, i.e. showing some objects only every couple of frames.
 In the case of learning from memory there is no loss of information when previous RAM~states are ignored. Hence in our models we only pass to the network the RAM~state corresponding to the last frame before a given action. We made some limited experiments passing all previous \texttt{frameskip} RAM~states to the network, but the results were worse than when passing only the last one. We still used frameskip of~$4$ in the basic experiments.
 
 The work~\cite{frameskip} suggests that choosing the right frameskip has a big influence on the performance of a model (see also~\cite{microsoft-frameskip}). We decided to try two bigger values of frameskip: $8$ and~$30$, corresponding to deciding on actions~$5$ and~$2$ times a second.
