@@ -51,7 +51,7 @@ It is worth noting that the algorithms based on Markov property (TD-learning, Q-
 \section{Q-learning}\label{qlearning}
 Let's call the function (distribution) mapping the current state~$s$ to the action~$a$ chosen by the agent \emph{a~strategy} (or \emph{policy})~$\pi$.
 
-Q-learning~\cite{qlearning, qlearning-old} is an algorithm able to choose a strategy in an MDP. It is based on the notion of Q-value: a function mapping the state-action~pair~$(s, a)$, for a fixed strategy~$\pi$, to the expected discounted reward after being in the state~$s$, making an action~$a$ and following the strategy~$\pi$ until the end of the episode.
+Q-learning~\cite{qlearning} is an algorithm able to choose a strategy in an MDP. It is based on the notion of Q-value: a function mapping the state-action~pair~$(s, a)$, for a fixed strategy~$\pi$, to the expected discounted reward after being in the state~$s$, making an action~$a$ and following the strategy~$\pi$ until the end of the episode.
 \begin{equation}\label{q-value}
   Q^\pi(s_t, a_t) = \underset{r\sim p(r_t | s_t, a_t)}{\mathbb{E}} r + \sum_{k=t+1}^\infty \gamma^{k-t}\underset{r\sim p(r_k|s_{k-1}, a_{k-1}), a_k\sim \pi(s_k)}{\mathbb{E}} r
 \end{equation}
